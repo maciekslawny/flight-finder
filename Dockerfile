@@ -6,6 +6,9 @@ WORKDIR /app
 # Skopiuj pliki projektu do katalogu roboczego kontenera
 COPY . /app/
 
+
+COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
+
 # Zainstaluj zależności projektu
 RUN pip install -r requirements.txt
 
