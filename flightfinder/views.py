@@ -185,22 +185,20 @@ class ImportFlightsData():
 
         self.setup_chrome_driver(headless=False)
 
-        for i, num in enumerate([1,2]):
 
-            if num == 1:
-                url = self.get_search_url(departure_city, arrival_city)
-            else:
-                url = self.get_search_url(arrival_city, departure_city)
-            self.go_url_website(url)
-            try:
-                self.accept_cookies()
-            except:
-                pass
-            self.get_cities()
-            self.create_cities()
-            self.open_price_table()
-            self.follow_months_price_table()
-            self.scan_all_months()
+
+
+        url = self.get_search_url(departure_city, arrival_city)
+        self.go_url_website(url)
+        try:
+            self.accept_cookies()
+        except:
+            pass
+        self.get_cities()
+        self.create_cities()
+        self.open_price_table()
+        self.follow_months_price_table()
+        self.scan_all_months()
 
 
 from django.core.management.base import BaseCommand, CommandError
