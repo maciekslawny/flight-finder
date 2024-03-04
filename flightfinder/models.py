@@ -14,9 +14,6 @@ class Flight(models.Model):
     arrival_city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='arrival_city')
     flight_date = models.DateField()
 
-    def get_recent_price(self):
-        return FlightPrice.objects.filter(flight=self).order_by('-created_at').first().price
-
     def get_weekday(self):
         week_days = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela']
         return week_days[self.flight_date.weekday()]
@@ -24,10 +21,22 @@ class Flight(models.Model):
     def __str__(self):
         return f'{self.departure_city} - {self.arrival_city} - {self.flight_date}'
 
+
+class FlightSearch(models.Model):
+    departure_city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='departure_city_search')
+    arrival_city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='arrival_city_search')
+    search_date = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f'{self.departure_city}, {self.arrival_city} - {self.search_date}'
+
+
+
 class FlightPrice(models.Model):
     flight = models.ForeignKey(Flight, on_delete=models.CASCADE)
     price = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+    flight_search = models.ForeignKey(FlightSearch, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.flight} - {self.price}'
+

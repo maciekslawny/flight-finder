@@ -12,7 +12,7 @@ import undetected_chromedriver as uc
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from datetime import datetime
-from flightfinder.models import City, FlightPrice, Flight
+from flightfinder.models import City, FlightPrice, Flight, FlightSearch
 
 
 def replace_special_chars(text):
@@ -32,7 +32,7 @@ def replace_special_chars(text):
 
 
 class ImportFlightsData():
-    def  __init__(self):
+    def __init__(self):
         self.current_year = datetime.now().year
         self.driver = None
         self.city_departure = None
@@ -40,8 +40,8 @@ class ImportFlightsData():
         self.city_departure_instance = None
         self.city_arrival_instance = None
         self.months = {'styczeń': '01', 'luty': '02', 'marzec': '03', 'kwiecień': '04', 'maj': '05', 'czerwiec': '06',
-                  'lipiec': '07', 'sierpień': '08', 'wrzesień': '09', 'październik': '10', 'listopad': '11',
-                  'grudzień': '12'}
+                       'lipiec': '07', 'sierpień': '08', 'wrzesień': '09', 'październik': '10', 'listopad': '11',
+                       'grudzień': '12'}
 
     def get_search_url(self, city_departure, city_arrival):
         if city_departure == 'Gdansk' and city_arrival == 'Alicante':
@@ -49,13 +49,13 @@ class ImportFlightsData():
         if city_departure == 'Alicante' and city_arrival == 'Gdansk':
             return 'https://www.google.com/travel/flights/search?tfs=CBwQAhopEgoyMDI0LTEwLTE2KABqCwgDEgcvbS8wemM2cgwIAxIIL20vMDM1bTZAAUgBcAGCAQsI____________AZgBAg&hl=pl&curr=PLN'
         if city_departure == 'Gdansk' and city_arrival == 'Malaga':
-            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhorEgoyMDI0LTA0LTExKABqDAgDEggvbS8wMzVtNnINCAMSCS9tLzAxOTc4ZEABSAFwAYIBCwj___________8BmAEC&hl=pl'
+            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhorEgoyMDI0LTA0LTExKABqDAgDEggvbS8wMzVtNnINCAMSCS9tLzAxOTc4ZEABSAFwAYIBCwj___________8BmAEC&hl=pl&curr=PLN'
         if city_departure == 'Malaga' and city_arrival == 'Gdansk':
-            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhorEgoyMDI0LTA0LTExKABqDQgDEgkvbS8wMTk3OGRyDAgDEggvbS8wMzVtNkABSAFwAYIBCwj___________8BmAEC&hl=pl'
+            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhorEgoyMDI0LTA0LTExKABqDQgDEgkvbS8wMTk3OGRyDAgDEggvbS8wMzVtNkABSAFwAYIBCwj___________8BmAEC&hl=pl&curr=PLN'
         if city_departure == 'Gdansk' and city_arrival == 'Neapol':
-            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhoqEgoyMDI0LTA0LTExKABqDAgDEggvbS8wMzVtNnIMCAMSCC9tLzBmaHN6QAFIAXABggELCP___________wGYAQI&hl=pl'
+            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhoqEgoyMDI0LTA0LTExKABqDAgDEggvbS8wMzVtNnIMCAMSCC9tLzBmaHN6QAFIAXABggELCP___________wGYAQI&hl=pl&curr=PLN'
         if city_departure == 'Neapol' and city_arrival == 'Gdansk':
-            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhoqEgoyMDI0LTA0LTExKABqDAgDEggvbS8wZmhzenIMCAMSCC9tLzAzNW02QAFIAXABggELCP___________wGYAQI&hl=pl'
+            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhoqEgoyMDI0LTA0LTExKABqDAgDEggvbS8wZmhzenIMCAMSCC9tLzAzNW02QAFIAXABggELCP___________wGYAQI&hl=pl&curr=PLN'
 
     def setup_chrome_driver(self, headless=False):
         print('setup_chrome_driver')
@@ -63,15 +63,14 @@ class ImportFlightsData():
         options.add_argument("−−incognito")
         chromeOptions = Options()
 
-        # chromeOptions.add_argument("--no-sandbox")
-        # chromeOptions.add_argument('--headless')
-        # chromeOptions.add_argument('--disable-dev-shm-usage')
-        # chromeOptions.add_argument("--disable-extensions")
-        # chromeOptions.add_argument("--ignore-certificate-errors")
-        # chromeOptions.headless = True
+        chromeOptions.add_argument("--no-sandbox")
+        chromeOptions.add_argument('--headless')
+        chromeOptions.add_argument('--disable-dev-shm-usage')
+        chromeOptions.add_argument("--disable-extensions")
+        chromeOptions.add_argument("--ignore-certificate-errors")
+        chromeOptions.headless = True
 
-
-        s = Service("/usr/bin/chromedriver")
+        # s = Service("/usr/bin/chromedriver")
         driver = webdriver.Chrome(options=chromeOptions)
 
         self.driver = driver
@@ -88,8 +87,10 @@ class ImportFlightsData():
         time.sleep(2)
 
     def get_cities(self):
-        self.city_departure_name = replace_special_chars(self.driver.find_element(By.XPATH, './/*[@aria-label="Skąd lecisz?"]').get_attribute("value"))
-        self.city_arrival_name = replace_special_chars(self.driver.find_element(By.XPATH, './/*[@aria-label="Dokąd?"]').get_attribute("value"))
+        self.city_departure_name = replace_special_chars(
+            self.driver.find_element(By.XPATH, './/*[@aria-label="Skąd lecisz?"]').get_attribute("value"))
+        self.city_arrival_name = replace_special_chars(
+            self.driver.find_element(By.XPATH, './/*[@aria-label="Dokąd?"]').get_attribute("value"))
 
     def create_cities(self):
         try:
@@ -116,7 +117,6 @@ class ImportFlightsData():
                 break
             time.sleep(2)
 
-
         for _ in range(10):
             try:
                 next_btn.click()
@@ -125,9 +125,10 @@ class ImportFlightsData():
                 break
             time.sleep(2)
 
-
     def scan_all_months(self):
         month_cards = self.driver.find_elements(By.XPATH, '//*[@class="Bc6Ryd ydXJud"]')
+        new_flight_search = FlightSearch.objects.create(departure_city=self.city_departure_instance,
+                                                        arrival_city=self.city_arrival_instance)
         for month in month_cards:
             month_name = month.find_elements(By.XPATH, ".//div")[0].text
             print(month_name)
@@ -148,7 +149,7 @@ class ImportFlightsData():
                                                                    arrival_city=self.city_arrival_instance)
                     flight.save()
                     print(flight, 'Created!')
-                    flight_price = FlightPrice.objects.create(price=int(price), flight=flight)
+                    flight_price = FlightPrice.objects.create(price=int(price), flight=flight, flight_search=new_flight_search)
                     flight_price.save()
                     print(flight_price, 'Created!')
 
@@ -156,7 +157,7 @@ class ImportFlightsData():
 
         self.setup_chrome_driver(headless=False)
 
-        for i, num in enumerate([1,2]):
+        for i, num in enumerate([1, 2]):
 
             if num == 1:
                 url = self.get_search_url(departure_city, arrival_city)
@@ -172,11 +173,6 @@ class ImportFlightsData():
             self.open_price_table()
             self.follow_months_price_table()
             self.scan_all_months()
-
-
-
-
-
 
 
 class Command(BaseCommand):
