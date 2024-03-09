@@ -12,6 +12,20 @@ services:
       - DOCKER_BUILDKIT=0
     volumes:
       - .:/app
+    depends_on:
+      - redis
+      - celerybeat
+
+  celerybeat:
+    build: .
+    command: celery -A config beat -l info
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+
+  redis:
+    image: redis
 
   nginx:
     image: nginx:latest

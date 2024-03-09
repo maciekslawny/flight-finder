@@ -130,3 +130,15 @@ MEDIA_ROOT = 'media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = None
+
+
+import os
+from celery import Celery
+
+# Ustawienia Celery
+CELERY_BROKER_URL = 'redis://redis:6379/0'  # Tutaj podaj adres brokera Celery, tutaj użyłem Redis
+
+# Inicjalizacja aplikacji Celery
+app = Celery('config')  # Zmiana 'your_app_name' na nazwę Twojej aplikacji
+app.config_from_object('django.conf:settings', namespace='CELERY')
+app.autodiscover_tasks(lambda:  settings.INSTALLED_APPS)

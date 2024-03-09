@@ -1,20 +1,83 @@
-from django.core.management.base import BaseCommand, CommandError
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
+from dataclasses import dataclass
+from datetime import timedelta
+from typing import Protocol
+from flightfinder.models import FlightPrice, City, FlightSearch, Flight
 import time
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from selenium_stealth import stealth
-import undetected_chromedriver as uc
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
 from datetime import datetime
-from flightfinder.models import City, FlightPrice, Flight, FlightSearch
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+
+@dataclass
+class TicketPlan():
+    ticket: FlightPrice
+    return_ticket: FlightPrice
+    duration: int
+    total_price: int
 
 
+class TicketPlanService(Protocol):
+    def get_tickets_plan(self, start_date: str, end_date: str, departure_city: str, arrival_city: str) -> list[
+        TicketPlan]:
+        pass
+
+
+class CheapestTicketPlanService(TicketPlanService):
+
+    def get_tickets_plan(self, start_date: str, end_date: str, departure_city: str, arrival_city: str):
+        flights = []
+        flight_search = FlightSearch.objects.filter(departure_city=City.objects.get(name=departure_city),
+                                                    arrival_city=City.objects.get(name=arrival_city)).order_by(
+            '-search_date').first()
+
+        flight_prices = FlightPrice.objects.filter(flight_search=flight_search)
+
+        for flight_price in flight_prices:
+            flight_search_return = FlightSearch.objects.filter(departure_city=City.objects.get(name=arrival_city),
+                                                               arrival_city=City.objects.get(
+                                                                   name=departure_city)).order_by(
+                '-search_date').first()
+            return_flight_prices = FlightPrice.objects.filter(flight_search=flight_search_return,
+                                                        flight__flight_date__gt=flight_price.flight.flight_date,
+                                                        flight__flight_date__lte=flight_price.flight.flight_date + timedelta(
+                                                            days=6))
+            for return_flight_price in return_flight_prices:
+                duration = return_flight_price.flight.flight_date - flight_price.flight.flight_date
+                total_price = flight_price.price + return_flight_price.price
+                ticket_result = TicketPlan(flight_price, return_flight_price, duration.days, total_price)
+                flights.append(ticket_result)
+
+        sorted_flights = sorted(flights, key=lambda x: x.total_price)
+        return sorted_flights
+
+class AllTicketPlanService(TicketPlanService):
+    '''Testowy service'''
+    def get_tickets_plan(self, start_date: str, end_date: str, departure_city: str, arrival_city: str):
+        flights = []
+
+        flight_prices = FlightPrice.objects.all()
+
+        for flight_price in flight_prices:
+
+            return_flight_prices = FlightPrice.objects.filter(flight__flight_date__gt=flight_price.flight.flight_date,
+                                                              flight__flight_date__lte=flight_price.flight.flight_date)
+            for return_flight_price in return_flight_prices:
+                duration = return_flight_price.flight.flight_date - flight_price.flight.flight_date
+                total_price = flight_price.price + return_flight_price.price
+                ticket_result = TicketPlan(flight_price, return_flight_price, duration.days, total_price)
+                flights.append(ticket_result)
+
+        sorted_flights = sorted(flights, key=lambda x: x.total_price)
+        return sorted_flights
+
+
+class TicketPlanFinder:
+    def __init__(self, ticket_plan_service: TicketPlanService) -> None:
+        self.ticket_plan_service = ticket_plan_service
+
+    def get_tickets_plan(self, start_date: str, end_date: str, departure_city: str, arrival_city: str) -> list[
+        TicketPlan]:
+        return self.ticket_plan_service.get_tickets_plan(start_date, end_date, departure_city, arrival_city)
 
 
 
@@ -176,24 +239,3 @@ class ImportFlightsData():
             self.follow_months_price_table()
             self.scan_all_months()
 
-
-class Command(BaseCommand):
-    help = 'Closes the specified poll for voting'
-
-    def add_arguments(self, parser):
-        # Definiujemy argumenty, które możemy przekazać do komendy
-        parser.add_argument('departure_city', nargs='?', type=str, default=None)
-        parser.add_argument('arrival_city', nargs='?', type=str, default=None)
-
-    def handle(self, *args, **options):
-
-        departure_city = options['departure_city']
-        arrival_city = options['arrival_city']
-
-        if not departure_city:
-            departure_city = 'Gdansk'
-        if not arrival_city:
-            arrival_city = 'Neapol'
-
-        test = ImportFlightsData()
-        test.import_flights(departure_city, arrival_city)
