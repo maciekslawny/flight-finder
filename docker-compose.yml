@@ -18,7 +18,7 @@ services:
 
   celerybeat:
     build: .
-    command: celery -A config beat -l info
+    command: celery -A config beat -l DEBUG
     volumes:
       - .:/app
     depends_on:
@@ -26,6 +26,15 @@ services:
 
   redis:
     image: redis
+
+  flower:
+    image: mher/flower
+    ports:
+      - "5555:5555"
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    depends_on:
+      - redis
 
   nginx:
     image: nginx:latest

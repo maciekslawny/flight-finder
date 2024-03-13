@@ -7,6 +7,8 @@ from selenium.webdriver.common.by import By
 from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+import logging
+logger = logging.getLogger(__name__)
 
 @dataclass
 class TicketPlan():
@@ -221,6 +223,7 @@ class ImportFlightsData():
     def import_flights(self, departure_city, arrival_city):
 
         self.setup_chrome_driver(headless=False)
+        logger.info('import_flights')
 
         for i, num in enumerate([1, 2]):
 
