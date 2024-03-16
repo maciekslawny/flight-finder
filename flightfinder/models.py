@@ -40,3 +40,9 @@ class FlightPrice(models.Model):
     def __str__(self):
         return f'{self.flight} - {self.price}'
 
+class SidebarDestination(models.Model):
+    departure_city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='departure_city_sidebar')
+    arrival_city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='arrival_city_sidebar')
+
+    def __str__(self):
+        return f'{self.departure_city} - {self.arrival_city}'

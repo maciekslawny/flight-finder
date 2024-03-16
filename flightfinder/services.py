@@ -19,50 +19,34 @@ class TicketPlan():
 
 
 class TicketPlanService(Protocol):
-    def get_tickets_plan(self, start_date: str, end_date: str, departure_city: str, arrival_city: str) -> list[
+    def get_tickets_plan(self, start_date, end_date, min_duration, max_duration, departure_city: str, arrival_city: str) -> list[
         TicketPlan]:
         pass
 
 
 class CheapestTicketPlanService(TicketPlanService):
 
-    def get_tickets_plan(self, start_date: str, end_date: str, departure_city: str, arrival_city: str):
+    def get_tickets_plan(self, start_date, end_date, min_duration, max_duration, departure_city: str, arrival_city: str):
         flights = []
+
         flight_search = FlightSearch.objects.filter(departure_city=City.objects.get(name=departure_city),
                                                     arrival_city=City.objects.get(name=arrival_city)).order_by(
             '-search_date').first()
 
-        flight_prices = FlightPrice.objects.filter(flight_search=flight_search)
+        flight_prices = FlightPrice.objects.filter(flight__flight_date__gte=start_date, flight__flight_date__lte=end_date, flight_search=flight_search)
 
         for flight_price in flight_prices:
             flight_search_return = FlightSearch.objects.filter(departure_city=City.objects.get(name=arrival_city),
                                                                arrival_city=City.objects.get(
                                                                    name=departure_city)).order_by(
                 '-search_date').first()
+
+
             return_flight_prices = FlightPrice.objects.filter(flight_search=flight_search_return,
-                                                        flight__flight_date__gt=flight_price.flight.flight_date,
+                                                        flight__flight_date__gt=flight_price.flight.flight_date+ timedelta(
+                                                            days=min_duration-1),
                                                         flight__flight_date__lte=flight_price.flight.flight_date + timedelta(
-                                                            days=6))
-            for return_flight_price in return_flight_prices:
-                duration = return_flight_price.flight.flight_date - flight_price.flight.flight_date
-                total_price = flight_price.price + return_flight_price.price
-                ticket_result = TicketPlan(flight_price, return_flight_price, duration.days, total_price)
-                flights.append(ticket_result)
-
-        sorted_flights = sorted(flights, key=lambda x: x.total_price)
-        return sorted_flights
-
-class AllTicketPlanService(TicketPlanService):
-    '''Testowy service'''
-    def get_tickets_plan(self, start_date: str, end_date: str, departure_city: str, arrival_city: str):
-        flights = []
-
-        flight_prices = FlightPrice.objects.all()
-
-        for flight_price in flight_prices:
-
-            return_flight_prices = FlightPrice.objects.filter(flight__flight_date__gt=flight_price.flight.flight_date,
-                                                              flight__flight_date__lte=flight_price.flight.flight_date)
+                                                            days=max_duration))
             for return_flight_price in return_flight_prices:
                 duration = return_flight_price.flight.flight_date - flight_price.flight.flight_date
                 total_price = flight_price.price + return_flight_price.price
@@ -77,9 +61,9 @@ class TicketPlanFinder:
     def __init__(self, ticket_plan_service: TicketPlanService) -> None:
         self.ticket_plan_service = ticket_plan_service
 
-    def get_tickets_plan(self, start_date: str, end_date: str, departure_city: str, arrival_city: str) -> list[
+    def get_tickets_plan(self, start_date, end_date, min_duration, max_duration, departure_city: str, arrival_city: str) -> list[
         TicketPlan]:
-        return self.ticket_plan_service.get_tickets_plan(start_date, end_date, departure_city, arrival_city)
+        return self.ticket_plan_service.get_tickets_plan(start_date, end_date, min_duration, max_duration, departure_city, arrival_city)
 
 
 
