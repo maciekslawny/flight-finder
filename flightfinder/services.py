@@ -107,6 +107,11 @@ class ImportFlightsData():
             return 'https://www.google.com/travel/flights/search?tfs=CBwQAhoqEgoyMDI0LTA0LTExKABqDAgDEggvbS8wMzVtNnIMCAMSCC9tLzBmaHN6QAFIAXABggELCP___________wGYAQI&hl=pl&curr=PLN'
         if city_departure == 'Neapol' and city_arrival == 'Gdansk':
             return 'https://www.google.com/travel/flights/search?tfs=CBwQAhoqEgoyMDI0LTA0LTExKABqDAgDEggvbS8wZmhzenIMCAMSCC9tLzAzNW02QAFIAXABggELCP___________wGYAQI&hl=pl&curr=PLN'
+        if city_departure == 'Warszawa' and city_arrival == 'Alicante':
+            return  'https://www.google.com/travel/flights/search?tfs=CBwQAhopEgoyMDI0LTEwLTE2KABqDAgDEggvbS8wODFtX3ILCAMSBy9tLzB6YzZAAUgBcAGCAQsI____________AZgBAg&hl=pl&curr=PLN'
+        if city_departure == 'Alicante' and city_arrival == 'Warszawa':
+            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhopEgoyMDI0LTEwLTE2KABqCwgDEgcvbS8wemM2cgwIAxIIL20vMDgxbV9AAUgBcAGCAQsI____________AZgBAg&hl=pl&curr=PLN'
+
 
     def setup_chrome_driver(self, headless=False):
         print('setup_chrome_driver')
