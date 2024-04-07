@@ -59,7 +59,10 @@ def destination_view(request, departure_city, arrival_city):
     flight_search = FlightSearch.objects.filter(departure_city=City.objects.get(name=departure_city),
                                                 arrival_city=City.objects.get(name=arrival_city)).order_by(
         '-search_date').first()
-
+    print('arrival_city', arrival_city)
+    test= get_sidebar_destinations()
+    for destination in test:
+        print(destination)
     context = {
         'departure_city': departure_city,
         'arrival_city': arrival_city,

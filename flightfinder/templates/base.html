@@ -1335,10 +1335,10 @@
 <!-- ======= Sidebar ======= -->
 <aside id="sidebar" class="sidebar">
 
-    <ul class="sidebar-nav" id="sidebar-nav">
+    <ul class="sidebar-nav " id="sidebar-nav">
 
-        <li class="nav-item">
-            <a class="nav-link " href="/">
+        <li class="nav-item ">
+            <a class="nav-link collapsed" href="/">
                 <i class="bi bi-grid"></i>
                 <span>Dashboard</span>
             </a>
@@ -1346,15 +1346,15 @@
 
 
         {% for key, value in sidebar_destinations.items %}
-            <a class="nav-link collapsed" data-bs-target="#tables-nav-{{ key }}" data-bs-toggle="collapse" href="#">
+            <a class="nav-link active {% if key.name == departure_city %}{% else %}collapsed{% endif %}" data-bs-target="#tables-nav-{{ key }}" data-bs-toggle="collapse" href="#" aria-expanded="false">
                 <i class="bi bi-airplane-fill"></i><span>{{ key }}</span><i
                     class="bi bi-chevron-down ms-auto"></i>
             </a>
-            <ul id="tables-nav-{{ key }}" class="nav-content collapse " data-bs-parent="#sidebar-nav-{{ key }}">
-                {% for arrival_city in value %}
+            <ul id="tables-nav-{{ key }}" class="nav-content {% if key.name == departure_city %}{% else %}collapse{% endif %}" data-bs-parent="#sidebar-nav-{{ key }}">
+                {% for arrival_city_value in value %}
                 <li>
-                    <a href="/destination/{{ key }}/{{ arrival_city }}">
-                        <i class="bi bi-circle"></i><span>{{ arrival_city }}</span>
+                    <a href="/destination/{{ key }}/{{ arrival_city_value }}" {% if arrival_city_value.name == arrival_city and key.name == departure_city %} class="active" {% endif %}>
+                        <i class="bi bi-circle"></i><span>{{ arrival_city_value }}</span>
                     </a>
                 </li>
                 {% endfor %}
