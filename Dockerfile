@@ -12,6 +12,8 @@ COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 # Zainstaluj zależności projektu
 RUN pip install -r requirements.txt
 
+RUN apt-get update && apt-get install -y redis-tools
+
 # Ustaw zmienną środowiskową dla Chrome
 ENV CHROME_BIN=/usr/bin/google-chrome
 

@@ -6,7 +6,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
-
+CELERY_BROKER_URL = 'amqp://guest:guest@rabbitmq:5672/'
 app = Celery('config')  # Zmiana na nazwę Twojego projektu
 
 app.config_from_object('django.conf:settings', namespace='CELERY')
@@ -14,7 +14,7 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.conf.beat_schedule = {
     'import-every-5-minutes': {
         'task': 'flightfinder.tasks.imporcik',  # Zmiana na ścieżkę Twojego zadania
-        'schedule': 300.0  # Ustawienie interwału czasowego, np. 30 sekund
+        'schedule': 240.0  # Ustawienie interwału czasowego, np. 30 sekund
     },
 }
 

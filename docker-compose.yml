@@ -13,28 +13,31 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - redis
+      - rabbitmq
       - celerybeat
 
-  celerybeat:
+  celeryworker:
     build: .
-    command: celery -A config beat -l DEBUG
+    command: celery -A config worker --loglevel=INFO
     volumes:
       - .:/app
     depends_on:
-      - redis
+      - rabbitmq
 
-  redis:
-    image: redis
-
-  flower:
-    image: mher/flower
-    ports:
-      - "5555:5555"
-    environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
+  celerybeat:
+    build: .
+    command: celery -A config  beat --loglevel=INFO
+    volumes:
+      - .:/app
     depends_on:
-      - redis
+      - rabbitmq
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"  # Port AMQP
+      - "15672:15672"  # Port RabbitMQ Management
+
 
   nginx:
     image: nginx:latest

@@ -1,5 +1,6 @@
 from celery import shared_task
 from flightfinder.services import ImportFlightsData
+from flightfinder.models import TestModel
 
 @shared_task
 def imporcik():
@@ -8,4 +9,4 @@ def imporcik():
 
     test = ImportFlightsData()
     test.import_flights(departure_city, arrival_city)
-    print("Hello from Celery Beat!")
+    # print("Hello from Celery Beat!")

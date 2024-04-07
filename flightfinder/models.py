@@ -46,3 +46,6 @@ class SidebarDestination(models.Model):
 
     def __str__(self):
         return f'{self.departure_city} - {self.arrival_city}'
+
+class TestModel(models.Model):
+    amount = models.FloatField()

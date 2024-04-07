@@ -136,9 +136,9 @@ import os
 from celery import Celery
 
 # Ustawienia Celery
-CELERY_BROKER_URL = 'redis://redis:6379/0'  # Tutaj podaj adres brokera Celery, tutaj użyłem Redis
+CELERY_BROKER_URL = 'amqp://guest:guest@rabbitmq:5672/'
 
 # Inicjalizacja aplikacji Celery
 app = Celery('config')  # Zmiana 'your_app_name' na nazwę Twojej aplikacji
 app.config_from_object('django.conf:settings', namespace='CELERY')
-app.autodiscover_tasks(lambda:  settings.INSTALLED_APPS)
+app.autodiscover_tasks()

@@ -8,6 +8,9 @@ from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import logging
+
+from flightfinder.ultis import get_weekend_days_amount
+
 logger = logging.getLogger(__name__)
 
 @dataclass
@@ -16,6 +19,7 @@ class TicketPlan():
     return_ticket: FlightPrice
     duration: int
     total_price: int
+    weekend_days: int
 
 
 class TicketPlanService(Protocol):
@@ -50,7 +54,8 @@ class CheapestTicketPlanService(TicketPlanService):
             for return_flight_price in return_flight_prices:
                 duration = return_flight_price.flight.flight_date - flight_price.flight.flight_date
                 total_price = flight_price.price + return_flight_price.price
-                ticket_result = TicketPlan(flight_price, return_flight_price, duration.days, total_price)
+                weekend_days = get_weekend_days_amount(flight_price.flight.flight_date, return_flight_price.flight.flight_date)
+                ticket_result = TicketPlan(flight_price, return_flight_price, duration.days, total_price, weekend_days)
                 flights.append(ticket_result)
 
         sorted_flights = sorted(flights, key=lambda x: x.total_price)
