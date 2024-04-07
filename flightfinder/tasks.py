@@ -1,12 +1,11 @@
 from celery import shared_task
 from flightfinder.services import ImportFlightsData
-from flightfinder.models import TestModel
 
 @shared_task
-def imporcik():
-    departure_city = 'Gdansk'
-    arrival_city = 'Alicante'
+def import_tickets():
+    destinations_list = [['Gdansk', 'Alicante'], ['Gdansk', 'Malaga'], ['Gdansk', 'Neapol']]
 
-    test = ImportFlightsData()
-    test.import_flights(departure_city, arrival_city)
+    for destination in destinations_list:
+        import_service = ImportFlightsData()
+        import_service.import_flights(destination[0], destination[1])
     # print("Hello from Celery Beat!")
