@@ -9,26 +9,26 @@ COPY . /app/
 
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 
-# Zainstaluj zależności projektu
-RUN pip install -r requirements.txt
-
-RUN apt-get update && apt-get install -y redis-tools
-
 # Ustaw zmienną środowiskową dla Chrome
 ENV CHROME_BIN=/usr/bin/google-chrome
 
-# Zainstaluj Chrome
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
-    && apt-get update && apt-get install -y google-chrome-stable
+# Pobierz i zainstaluj Chrome w wersji 122
+# Skopiuj plik .deb do kontenera
+COPY google-chrome-stable_123.0.6312.86-1_amd64.deb /tmp/
+
+# Zainstaluj Chrome z lokalnego pliku .deb
+RUN apt-get update && apt-get install -y /tmp/google-chrome-stable_123.0.6312.86-1_amd64.deb \
+    && rm /tmp/google-chrome-stable_123.0.6312.86-1_amd64.deb
 
 # Pobierz i zainstaluj ChromeDriver
 RUN LATEST_CHROMEDRIVER=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE) \
-    && wget -q -O /tmp/chromedriver.zip https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.94/linux64/chromedriver-linux64.zip \
+    && wget -q -O /tmp/chromedriver.zip https://storage.googleapis.com/chrome-for-testing-public/123.0.6312.122/linux64/chromedriver-linux64.zip \
     && unzip /tmp/chromedriver.zip -d /usr/bin/ \
     && mv /usr/bin/chromedriver-linux64 /usr/bin/chromedriver \
     && rm /tmp/chromedriver.zip
 
+# Zainstaluj zależności projektu
+RUN pip install -r requirements.txt
 
 # Dodaj ścieżkę do ChromeDrivera do zmiennej PATH
 ENV PATH="/usr/bin/chromedriver:${PATH}"
