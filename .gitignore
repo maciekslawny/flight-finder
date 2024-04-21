@@ -1,2 +1,3 @@
 # Ignoruj plik .env
 .env
+config/.env

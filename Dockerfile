@@ -14,15 +14,15 @@ ENV CHROME_BIN=/usr/bin/google-chrome
 
 # Pobierz i zainstaluj Chrome w wersji 122
 # Skopiuj plik .deb do kontenera
-COPY google-chrome-stable_123.0.6312.86-1_amd64.deb /tmp/
+COPY google-chrome-stable_119.0.6045.199-1_amd64.deb /tmp/
 
 # Zainstaluj Chrome z lokalnego pliku .deb
-RUN apt-get update && apt-get install -y /tmp/google-chrome-stable_123.0.6312.86-1_amd64.deb \
-    && rm /tmp/google-chrome-stable_123.0.6312.86-1_amd64.deb
+RUN apt-get update && apt-get install -y /tmp/google-chrome-stable_119.0.6045.199-1_amd64.deb \
+    && rm /tmp/google-chrome-stable_119.0.6045.199-1_amd64.deb
 
 # Pobierz i zainstaluj ChromeDriver
 RUN LATEST_CHROMEDRIVER=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE) \
-    && wget -q -O /tmp/chromedriver.zip https://storage.googleapis.com/chrome-for-testing-public/123.0.6312.122/linux64/chromedriver-linux64.zip \
+    && wget -q -O /tmp/chromedriver.zip https://storage.googleapis.com/chrome-for-testing-public/119.0.6045.105/linux64/chromedriver-linux64.zip \
     && unzip /tmp/chromedriver.zip -d /usr/bin/ \
     && mv /usr/bin/chromedriver-linux64 /usr/bin/chromedriver \
     && rm /tmp/chromedriver.zip
