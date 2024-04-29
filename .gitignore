@@ -1,3 +1,5 @@
 # Ignoruj plik .env
 .env
+
+# Ignoruj plik .env w folderze config
 config/.env

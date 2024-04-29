@@ -38,7 +38,6 @@ services:
       - "5672:5672"  # Port AMQP
       - "15672:15672"  # Port RabbitMQ Management
 
-
   nginx:
     image: nginx:latest
     volumes:
@@ -47,3 +46,12 @@ services:
       - "80:80"
     depends_on:
       - web
+
+  flower:
+    image: mher/flower
+    ports:
+      - "5555:5555"
+    environment:
+    - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672/
+    depends_on:
+      - rabbitmq
