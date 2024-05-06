@@ -215,6 +215,8 @@ class ImportFlightsData():
                     print(flight_price, 'Created!')
 
     def import_flights(self, departure_city, arrival_city):
+        if self.driver:
+            self.driver.quit()
 
         self.setup_chrome_driver(headless=False)
         logger.info('import_flights')

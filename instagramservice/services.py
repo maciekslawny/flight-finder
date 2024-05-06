@@ -46,3 +46,25 @@ class InstagramService():
 
         test = cl.photo_upload(f"instagramservice/images/instagram_post_images/post-{self.post.id}.jpg", self.post.description)
         print('RESPONSE TEST: ', test)
+
+
+    def create_story_image(self):
+
+        # Wczytaj istniejący obrazek
+        background = Image.open(f"instagramservice/images/story-tlo.jpg")
+
+        # Ustaw czcionkę i tekst
+        font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
+                                  210)  # Wybierz czcionkę i rozmiar
+        draw = ImageDraw.Draw(background)
+
+        # Uzyskaj granice obszaru zawierającego tekst
+
+
+        test_text = draw.textbbox((0, -200), str('Testowy') + ' PLN', font=font)
+        test_text_position = ((background.width - test_text[2]) // 2, (background.height - test_text[3]) // 2)
+
+        draw.text(test_text_position, 'test', fill="white", font=font)
+
+        # Zapisz obraz jako plik JPEG
+        background.save(f"instagramservice/images/instagram_post_images/post-teest.jpg")
