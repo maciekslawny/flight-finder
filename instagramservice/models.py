@@ -1,6 +1,8 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.db import models
+
+from flightfinder.services import CheapestTicketPlanService, TicketPlanFinder
 from instagramservice.services import InstagramService
 from instagramservice.cities_services import AlicanteService
 
@@ -62,3 +64,33 @@ class InstagramPost(models.Model):
 
     def __str__(self):
         return f'{self.departure_city} - {self.arrival_city} - {self.price} - {self.created_at}'
+
+
+class InstagramStory(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    description = models.TextField()
+    is_published = models.BooleanField(default=False)
+    is_story_generated = models.BooleanField(default=False)
+
+    def generate_image(self):
+        from_search_date = datetime.now().date()
+        to_search_date = datetime.now().date() + timedelta(days=25)
+        print(from_search_date, to_search_date)
+
+        finding_ticket_service = CheapestTicketPlanService()
+        finder = TicketPlanFinder(ticket_plan_service=finding_ticket_service)
+
+        tickets = []
+        for city_string in ['Alicante', 'Malaga', 'Neapol']:
+            tickets = tickets + finder.get_tickets_plan(from_search_date, to_search_date, 1, 6, 'Gdansk', city_string)
+        tickets = sorted(tickets, key=lambda x: x.total_price)
+
+
+        service = InstagramService()
+        service.story = self
+        service.flights_queryset = tickets[:5]
+        service.create_story_image()
+        self.is_image_generated = True
+        self.save()
+        print('Story image generated')
+

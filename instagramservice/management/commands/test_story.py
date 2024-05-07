@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from django.core.management.base import BaseCommand, CommandError
 
 from flightfinder.services import CheapestTicketPlanService, TicketPlanFinder
-from instagramservice.models import InstagramPost
+from instagramservice.models import InstagramPost, InstagramStory
 from instagramservice.cities_services import AlicanteService
 
 
@@ -41,11 +41,9 @@ class Command(BaseCommand):
         flight_date = str(selected_ticket.ticket.flight.flight_date)
         flight_return_date = str(selected_ticket.return_ticket.flight.flight_date)
 
-        new_post = InstagramPost(description = '', price = price, departure_city = departure_city, arrival_city=arrival_city, flight_date=flight_date, flight_return_date=flight_return_date)
+        new_post = InstagramStory(description = '')
         new_post.save()
 
         new_post.generate_image()
-        new_post.generate_description()
-        new_post.publish()
 
 

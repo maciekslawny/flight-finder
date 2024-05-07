@@ -6,6 +6,8 @@ from instagrapi.types import StoryMention, StoryMedia, StoryLink, StoryHashtag
 class InstagramService():
     def __init__(self):
         self.post = None
+        self.story = None
+        self.flights_queryset = None
 
     def create_post_image(self):
         background_image = ''
@@ -47,24 +49,72 @@ class InstagramService():
         test = cl.photo_upload(f"instagramservice/images/instagram_post_images/post-{self.post.id}.jpg", self.post.description)
         print('RESPONSE TEST: ', test)
 
+    from PIL import Image, ImageDraw, ImageFont
 
     def create_story_image(self):
-
         # Wczytaj istniejący obrazek
         background = Image.open(f"instagramservice/images/story-tlo.jpg")
 
         # Ustaw czcionkę i tekst
         font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
-                                  210)  # Wybierz czcionkę i rozmiar
+                                  110)  # Wybierz czcionkę i rozmiar
         draw = ImageDraw.Draw(background)
 
-        # Uzyskaj granice obszaru zawierającego tekst
+        # Tekst
+        text = "LOTY NA MAJ"
+        text_color = "black"
+        background_color = "white"
+
+        # Pozycja tekstu
+        text_width = draw.textlength(text, font=font)
+        x = 120
+        y = 140
+
+        # Narysuj tło dla tekstu
+        draw.rounded_rectangle([x - 20, y, x + text_width + 20, y + 130], radius=50, fill=background_color)
+
+        # Narysuj tekst na tle
+        draw.text((x, y), text, fill=text_color, font=font)
+
+        font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
+                                  90)
+        text = "Wyloty z Gdańska:"
+        text_width = draw.textlength(text, font=font)
+        x = 90
+        y = 500
+        text_width = draw.textlength(text, font=font)
+        draw.text((x, y), text, fill=text_color, font=font)
+
+        current_position = 630
+        for flight in self.flights_queryset:
+            print(flight)
 
 
-        test_text = draw.textbbox((0, -200), str('Testowy') + ' PLN', font=font)
-        test_text_position = ((background.width - test_text[2]) // 2, (background.height - test_text[3]) // 2)
 
-        draw.text(test_text_position, 'test', fill="white", font=font)
+            font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
+                                      70)
+            text = f"{flight.ticket.flight.arrival_city} - {flight.total_price} zł "
+            text_width = draw.textlength(text, font=font)
+            x = 90
+            y = current_position
+            text_width = draw.textlength(text, font=font)
+            draw.text((x, y), text, fill=text_color, font=font)
+
+            current_position += 70
+
+            font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
+                                      60)
+            text = f"Wylot: {str(flight.ticket.flight.flight_date)[5:10]}  -  Powrót: {str(flight.return_ticket.flight.flight_date)[5:10]}"
+            text_width = draw.textlength(text, font=font)
+            x = 90
+            y = current_position
+            text_width = draw.textlength(text, font=font)
+            draw.text((x, y), text, fill=text_color, font=font)
+
+            current_position += 100
+
+
+
 
         # Zapisz obraz jako plik JPEG
-        background.save(f"instagramservice/images/instagram_post_images/post-teest.jpg")
+        background.save(f"instagramservice/images/instagram_post_images/story-{self.story.id}.jpg")

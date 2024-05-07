@@ -215,26 +215,31 @@ class ImportFlightsData():
                     print(flight_price, 'Created!')
 
     def import_flights(self, departure_city, arrival_city):
-        if self.driver:
-            self.driver.quit()
+        try:
+            if self.driver:
+                self.driver.quit()
+        except Exception as e:
+            logger.error(f"Error while quitting driver: {e}")
 
-        self.setup_chrome_driver(headless=False)
-        logger.info('import_flights')
+        try:
+            self.setup_chrome_driver(headless=False)
+            logger.info('import_flights')
 
-        for i, num in enumerate([1, 2]):
-
-            if num == 1:
-                url = self.get_search_url(departure_city, arrival_city)
-            else:
-                url = self.get_search_url(arrival_city, departure_city)
-            self.go_url_website(url)
-            try:
-                self.accept_cookies()
-            except:
-                pass
-            self.get_cities()
-            self.create_cities()
-            self.open_price_table()
-            self.follow_months_price_table()
-            self.scan_all_months()
+            for i, num in enumerate([1, 2]):
+                if num == 1:
+                    url = self.get_search_url(departure_city, arrival_city)
+                else:
+                    url = self.get_search_url(arrival_city, departure_city)
+                self.go_url_website(url)
+                try:
+                    self.accept_cookies()
+                except:
+                    pass
+                self.get_cities()
+                self.create_cities()
+                self.open_price_table()
+                self.follow_months_price_table()
+                self.scan_all_months()
+        except Exception as e:
+            logger.error(f"Error during import: {e}")
 
