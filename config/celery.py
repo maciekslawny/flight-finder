@@ -13,7 +13,7 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 app.conf.beat_schedule = {
     'import-every-60-minutes': {
-        'task': 'flightfinder.tasks.import_tickets',  # Zmiana na ścieżkę Twojego zadania
+        'task': 'flightfinder.tasks.import_tickets_test',  # Zmiana na ścieżkę Twojego zadania
         'schedule': 200.0  # Ustawienie interwału czasowego, np. 30 sekund
     },
 }

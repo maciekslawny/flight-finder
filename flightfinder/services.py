@@ -149,7 +149,7 @@ class ImportFlightsData():
 
     def get_cities(self):
         self.city_departure_name = self.replace_special_chars(
-            self.driver.find_element(By.XPATH, './/*[@aria-label="Skąd lcisz?"]').get_attribute("value"))
+            self.driver.find_element(By.XPATH, './/*[@aria-label="Skąd lecisz?"]').get_attribute("value"))
         self.city_arrival_name = self.replace_special_chars(
             self.driver.find_element(By.XPATH, './/*[@aria-label="Dokąd?"]').get_attribute("value"))
 

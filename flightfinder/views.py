@@ -75,9 +75,13 @@ def destination_view(request, departure_city, arrival_city):
 
     return render(request, 'flightfinder/destination_view.html', context)
 
-
+import subprocess
+import os
 def update(request, departure_city, arrival_city):
-    update = ImportFlightsData()
-    update.import_flights(departure_city, arrival_city)
+    os.system("docker-compose restart")
+    # subprocess.run(['docker-compose', 'docker-compose', 'restart'], shell=True, check=True)
+    print("Kontenery Docker zostały zresetowane pomyślnie.")
+    # update = ImportFlightsData()
+    # update.import_flights(departure_city, arrival_city)
 
     return redirect(f'/destination/{departure_city}/{arrival_city}')
