@@ -118,7 +118,7 @@ class ImportFlightsData():
             return 'https://www.google.com/travel/flights/search?tfs=CBwQAhopEgoyMDI0LTEwLTE2KABqCwgDEgcvbS8wemM2cgwIAxIIL20vMDgxbV9AAUgBcAGCAQsI____________AZgBAg&hl=pl&curr=PLN'
 
 
-    def setup_chrome_driver(self, headless=False):
+    def setup_chrome_driver(self):
         print('setup_chrome_driver')
         options = Options()
         options.add_argument("−−incognito")
@@ -149,7 +149,7 @@ class ImportFlightsData():
 
     def get_cities(self):
         self.city_departure_name = self.replace_special_chars(
-            self.driver.find_element(By.XPATH, './/*[@aria-label="Skąd lecisz?"]').get_attribute("value"))
+            self.driver.find_element(By.XPATH, './/*[@aria-label="Skąd lcisz?"]').get_attribute("value"))
         self.city_arrival_name = self.replace_special_chars(
             self.driver.find_element(By.XPATH, './/*[@aria-label="Dokąd?"]').get_attribute("value"))
 
@@ -215,31 +215,28 @@ class ImportFlightsData():
                     print(flight_price, 'Created!')
 
     def import_flights(self, departure_city, arrival_city):
-        try:
-            if self.driver:
-                self.driver.quit()
-        except Exception as e:
-            logger.error(f"Error while quitting driver: {e}")
 
-        try:
-            self.setup_chrome_driver(headless=False)
-            logger.info('import_flights')
+        if self.driver:
+            self.driver.quit()
 
-            for i, num in enumerate([1, 2]):
-                if num == 1:
-                    url = self.get_search_url(departure_city, arrival_city)
-                else:
-                    url = self.get_search_url(arrival_city, departure_city)
-                self.go_url_website(url)
-                try:
-                    self.accept_cookies()
-                except:
-                    pass
-                self.get_cities()
-                self.create_cities()
-                self.open_price_table()
-                self.follow_months_price_table()
-                self.scan_all_months()
-        except Exception as e:
-            logger.error(f"Error during import: {e}")
+
+
+        self.setup_chrome_driver()
+        logger.info('import_flights')
+
+        for i, num in enumerate([1, 2]):
+            if num == 1:
+                url = self.get_search_url(departure_city, arrival_city)
+            else:
+                url = self.get_search_url(arrival_city, departure_city)
+            self.go_url_website(url)
+            try:
+                self.accept_cookies()
+            except:
+                pass
+            self.get_cities()
+            self.create_cities()
+            self.open_price_table()
+            self.follow_months_price_table()
+            self.scan_all_months()
 
