@@ -13,14 +13,16 @@ from selenium.webdriver.chrome.options import Options
 import logging
 
 @shared_task
-def import_tickets():
-    destinations_list = [['Gdansk', 'Alicante'], ['Gdansk', 'Malaga'], ['Gdansk', 'Neapol']]
-
-    for destination in destinations_list:
-
-        import_service = ImportFlightsData()
-        import_service.import_flights(destination[0], destination[1])
+def import_tickets(city_departure, city_arrival):
+    # destinations_list = [['Gdansk', 'Alicante'], ['Gdansk', 'Malaga'], ['Gdansk', 'Neapol']]
+    #
+    # for destination in destinations_list:
+    #
+    #     import_service = ImportFlightsData()
+    #     import_service.import_flights(destination[0], destination[1])
     # print("Hello from Celery Beat!")
+    import_service = ImportFlightsData()
+    import_service.import_flights(city_departure, city_arrival)
 
 def replace_special_chars(text):
     # Definiujemy mapowanie specjalnych znaków na ich odpowiedniki
