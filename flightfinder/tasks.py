@@ -73,7 +73,6 @@ def import_tickets_test():
 
         chromeOptions.add_argument("--no-sandbox")
         chromeOptions.add_argument('--headless')
-        chromeOptions.add_argument('--disable-dev-shm-usage')
         chromeOptions.add_argument("--disable-extensions")
         chromeOptions.add_argument("--ignore-certificate-errors")
         chromeOptions.headless = True
