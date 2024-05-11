@@ -164,3 +164,4 @@ def import_tickets_test():
                         flight_price.save()
                         print(flight_price, 'Created!')
 
+        driver.quit()
