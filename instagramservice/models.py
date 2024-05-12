@@ -66,6 +66,35 @@ class InstagramPost(models.Model):
         return f'{self.departure_city} - {self.arrival_city} - {self.price} - {self.created_at}'
 
 
+class InstagramPostFact(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    description = models.TextField()
+    published_date = models.DateTimeField(null=True)
+    is_published = models.BooleanField(default=False)
+    is_image_generated = models.BooleanField(default=False)
+
+    def generate_image(self):
+        service = InstagramService()
+        service.post_fact = self
+        service.create_post_fact_images()
+        self.is_image_generated = True
+        self.save()
+
+    def publish(self):
+        if self.is_published:
+            print('Already published')
+            return
+        service = InstagramService()
+        service.post_fact = self
+        try:
+            service.upload_post_fact()
+            self.is_published = True
+            self.published_date = datetime.now()
+            self.save()
+        except:
+            print('Error publishing')
+
+
 class InstagramStory(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     description = models.TextField()

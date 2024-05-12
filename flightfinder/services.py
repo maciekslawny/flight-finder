@@ -216,11 +216,6 @@ class ImportFlightsData():
 
     def import_flights(self, departure_city, arrival_city):
 
-        if self.driver:
-            self.driver.quit()
-
-
-
         self.setup_chrome_driver()
         logger.info('import_flights')
 
@@ -239,4 +234,6 @@ class ImportFlightsData():
             self.open_price_table()
             self.follow_months_price_table()
             self.scan_all_months()
+
+        self.driver.quit()
 
