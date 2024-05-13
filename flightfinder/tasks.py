@@ -82,87 +82,92 @@ def import_tickets_test():
         driver = webdriver.Chrome(options=chromeOptions)
 
 
+        try:
 
+            for i, num in enumerate([1, 2]):
+                if num == 1:
+                    url = get_search_url(destination[0], destination[1])
+                else:
+                    url = get_search_url(destination[1], destination[0])
 
-        for i, num in enumerate([1, 2]):
-            if num == 1:
-                url = get_search_url(destination[0], destination[1])
-            else:
-                url = get_search_url(destination[1], destination[0])
-
-            driver.get(url)
-            time.sleep(2)
-            try:
-                print('accept_cookies')
-                button_accept = driver.find_elements(By.XPATH, "//button")[1]
-                button_accept.click()
+                driver.get(url)
                 time.sleep(2)
-            except:
-                pass
-
-            city_departure_name = replace_special_chars(
-                driver.find_element(By.XPATH, './/*[@aria-label="Skąd lecisz?"]').get_attribute("value"))
-            city_arrival_name = replace_special_chars(
-                driver.find_element(By.XPATH, './/*[@aria-label="Dokąd?"]').get_attribute("value"))
-
-            print(city_departure_name)
-            try:
-                city_departure_instance = City.objects.get(name=city_departure_name)
-            except:
-                city_departure_instance = City.objects.create(name=city_departure_name)
-            try:
-                city_arrival_instance = City.objects.get(name=city_arrival_name)
-            except:
-                city_arrival_instance = City.objects.create(name=city_arrival_name)
-
-
-            driver.find_elements(By.XPATH, "//*[@placeholder='Wylot']")[0].click()
-
-            time.sleep(2)
-            previous_btn = driver.find_elements(By.XPATH, "//*[@ssk='6:yVlIde']")[0]
-            next_btn = driver.find_elements(By.XPATH, "//*[@jsname='KpyLEe']")[0]
-            for _ in range(10):
                 try:
-                    previous_btn.click()
+                    print('accept_cookies')
+                    button_accept = driver.find_elements(By.XPATH, "//button")[1]
+                    button_accept.click()
+                    time.sleep(2)
                 except:
-                    print('nie udalo sie kliknac wstecz')
-                    break
-                time.sleep(2)
+                    pass
 
-            for _ in range(10):
+                city_departure_name = replace_special_chars(
+                    driver.find_element(By.XPATH, './/*[@aria-label="Skąd lecisz?"]').get_attribute("value"))
+                city_arrival_name = replace_special_chars(
+                    driver.find_element(By.XPATH, './/*[@aria-label="Dokąd?"]').get_attribute("value"))
+
+                print(city_departure_name)
                 try:
-                    next_btn.click()
+                    city_departure_instance = City.objects.get(name=city_departure_name)
                 except:
-                    print('nie udalo sie kliknac dalej')
-                    break
+                    city_departure_instance = City.objects.create(name=city_departure_name)
+                try:
+                    city_arrival_instance = City.objects.get(name=city_arrival_name)
+                except:
+                    city_arrival_instance = City.objects.create(name=city_arrival_name)
+
+
+                driver.find_elements(By.XPATH, "//*[@placeholder='Wylot']")[0].click()
+
                 time.sleep(2)
+                previous_btn = driver.find_elements(By.XPATH, "//*[@ssk='6:yVlIde']")[0]
+                next_btn = driver.find_elements(By.XPATH, "//*[@jsname='KpyLEe']")[0]
+                for _ in range(10):
+                    try:
+                        previous_btn.click()
+                    except:
+                        print('nie udalo sie kliknac wstecz')
+                        break
+                    time.sleep(2)
 
-            month_cards = driver.find_elements(By.XPATH, '//*[@class="Bc6Ryd ydXJud"]')
-            new_flight_search = FlightSearch.objects.create(departure_city=city_departure_instance,
-                                                            arrival_city=city_arrival_instance)
-            for month in month_cards:
-                month_name = month.find_elements(By.XPATH, ".//div")[0].text
-                print(month_name)
-                dates = month.find_elements(By.XPATH, './/*[@class="p1BRgf KQqAEc"]')
-                year = current_year
-                for date in dates:
-                    if '2' in month_name:
-                        year += 1
-                        month_name = 'styczeń'
-                    day = date.find_element(By.XPATH, './/*[@jsname="nEWxA"]').text
-                    object_date = str(day) + '-' + months[f'{month_name}'] + '-' + str(year)
-                    price = date.find_element(By.XPATH, './/*[@jsname="qCDwBb"]').text.replace(' ', '')
-                    if price:
-                        print(object_date, price)
-                        flight_date = datetime.strptime(object_date, "%d-%m-%Y")
-                        flight, created = Flight.objects.get_or_create(flight_date=flight_date,
-                                                                       departure_city=city_departure_instance,
-                                                                       arrival_city=city_arrival_instance)
-                        flight.save()
-                        print(flight, 'Created!')
-                        flight_price = FlightPrice.objects.create(price=int(price), flight=flight,
-                                                                  flight_search=new_flight_search)
-                        flight_price.save()
-                        print(flight_price, 'Created!')
+                for _ in range(10):
+                    try:
+                        next_btn.click()
+                    except:
+                        print('nie udalo sie kliknac dalej')
+                        break
+                    time.sleep(2)
 
-        driver.quit()
+                month_cards = driver.find_elements(By.XPATH, '//*[@class="Bc6Ryd ydXJud"]')
+                new_flight_search = FlightSearch.objects.create(departure_city=city_departure_instance,
+                                                                arrival_city=city_arrival_instance)
+                for month in month_cards:
+                    month_name = month.find_elements(By.XPATH, ".//div")[0].text
+                    print(month_name)
+                    dates = month.find_elements(By.XPATH, './/*[@class="p1BRgf KQqAEc"]')
+                    year = current_year
+                    for date in dates:
+                        if '2' in month_name:
+                            year += 1
+                            month_name = 'styczeń'
+                        day = date.find_element(By.XPATH, './/*[@jsname="nEWxA"]').text
+                        object_date = str(day) + '-' + months[f'{month_name}'] + '-' + str(year)
+                        price = date.find_element(By.XPATH, './/*[@jsname="qCDwBb"]').text.replace(' ', '')
+                        if price:
+                            print(object_date, price)
+                            flight_date = datetime.strptime(object_date, "%d-%m-%Y")
+                            flight, created = Flight.objects.get_or_create(flight_date=flight_date,
+                                                                           departure_city=city_departure_instance,
+                                                                           arrival_city=city_arrival_instance)
+                            flight.save()
+                            print(flight, 'Created!')
+                            flight_price = FlightPrice.objects.create(price=int(price), flight=flight,
+                                                                      flight_search=new_flight_search)
+                            flight_price.save()
+                            print(flight_price, 'Created!')
+
+            driver.quit()
+            return 'DONE'
+
+        except:
+            driver.quit()
+            return 'ERROR'

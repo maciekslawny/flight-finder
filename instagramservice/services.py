@@ -1,8 +1,10 @@
 from PIL import Image, ImageDraw, ImageFont
 from instagrapi import Client
 from decouple import config
+import random
 from instagrapi.types import StoryMention, StoryMedia, StoryLink, StoryHashtag
-from instagramservice.facts import alicante_facts
+from instagramservice.facts import alicante_facts, malaga_facts
+import os
 
 class InstagramService():
     def __init__(self):
@@ -56,12 +58,11 @@ class InstagramService():
 
 
     def create_post_fact_images(self):
-        alicante_fact = alicante_facts[1]
-        text = alicante_fact['tytuł']
-        text_split = text.split(' ')
+        title = self.post_fact.fact.title
+        title_split = title.split(' ')
         flag_word = ''
         result_words_list = []
-        for x, word in enumerate(text_split):
+        for x, word in enumerate(title_split):
             print(word)
 
             if x == 0:
@@ -73,14 +74,18 @@ class InstagramService():
             else:
                 flag_word = flag_word + ' ' + word
 
-            if x == len(text_split) - 1:
+            if x == len(title_split) - 1:
                 result_words_list.append(flag_word)
 
 
 
         print(result_words_list)
 
-        background = Image.open(f"instagramservice/images/instagram_posts_facts/background/beach/1.jpg")
+        files = os.listdir(f"instagramservice/images/instagram_posts_facts/background/{self.post_fact.fact.category}/")
+        file_count = len(files)
+        print('LICZBA PLIKOW', file_count)
+
+        background = Image.open(f"instagramservice/images/instagram_posts_facts/background/{self.post_fact.fact.category}/{random.randint(1, file_count)}.jpg")
         W, H = 1080, 1080
         font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
                                   125)  # Wybierz czcionkę i rozmiar
@@ -99,11 +104,16 @@ class InstagramService():
         # Zapisz obraz jako plik JPEG
         background.save(f"instagramservice/images/instagram_posts_facts/post-fact-title-{self.post_fact.id}-1-tlo.jpg")
 
+        items = {self.post_fact.fact.title_1: self.post_fact.fact.description_1,
+                 self.post_fact.fact.title_2: self.post_fact.fact.description_2,
+                 self.post_fact.fact.title_3: self.post_fact.fact.description_3,
+                 self.post_fact.fact.title_4: self.post_fact.fact.description_4,
+                 self.post_fact.fact.title_5: self.post_fact.fact.description_5}
 
 
-        for number, fact in enumerate(alicante_fact['podpunkty']):
+        for number, fact in enumerate(items):
 
-            if number == len(alicante_fact['podpunkty']) - 1:
+            if number == len(items) - 1:
                 background = Image.open(f"instagramservice/images/post-fact-bg-3.jpg")
             else:
                 background = Image.open(f"instagramservice/images/post-fact-bg-2.jpg")
@@ -120,7 +130,7 @@ class InstagramService():
             draw.text(((W - w) / 2, 185), number_dot, fill="#fdbd76", font=font)
 
             # PODTYTUŁ
-            subtitle = list(alicante_fact['podpunkty'].keys())[number]
+            subtitle = list(items.keys())[number]
             print(subtitle)
             if len(subtitle) <= 20:
                 font_size = 90
@@ -138,7 +148,20 @@ class InstagramService():
             draw.text(((W - w) / 2, 383), subtitle, fill="#fdbd76", font=font)
 
             # OPIS
-            description = list(alicante_fact['podpunkty'].values())[number]
+            description = list(items.values())[number]
+            print('DLUGOSC DESC:', len(description), description)
+            if len(description) <= 150:
+                font_size = 60
+                text_gap = 70
+            elif 151 > len(description) > 170:
+                font_size = 55
+                text_gap = 65
+            elif 171 > len(description) > 185:
+                font_size = 50
+                text_gap = 65
+            else:
+                font_size = 45
+                text_gap = 55
             text_split = description.split(' ')
             flag_word = ''
             description_lines_list = []
@@ -161,11 +184,11 @@ class InstagramService():
             height = 525
             for description_line in description_lines_list:
                 font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
-                                          60)
+                                          font_size)
                 _, _, w, h = draw.textbbox((0, 0), description_line, font=font)
                 draw.text(((W - w) / 2, height + 3), description_line, fill="white", font=font)
                 draw.text(((W - w) / 2, height), description_line, fill="black", font=font)
-                height += 70
+                height += text_gap
 
 
 
@@ -197,7 +220,7 @@ class InstagramService():
         ]
 
         test = cl.album_upload(photo_list,
-                               'self.post.description')
+                               self.post_fact.fact.description + '\n' + self.post_fact.fact.hashtags)
         print('RESPONSE TEST: ', test)
 
 

@@ -66,12 +66,47 @@ class InstagramPost(models.Model):
         return f'{self.departure_city} - {self.arrival_city} - {self.price} - {self.created_at}'
 
 
-class InstagramPostFact(models.Model):
+class Fact(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     description = models.TextField()
+    place = models.CharField(max_length=50, null=True, blank=True)
+    hashtags = models.TextField(null=True, blank=True)
+    title = models.CharField(max_length=50)
+    category = models.CharField(max_length=50, null=True, blank=True)
+    title_1 = models.CharField(max_length=50, null=True, blank=True)
+    description_1 = models.TextField(null=True, blank=True)
+    title_2 = models.CharField(max_length=50, null=True, blank=True)
+    description_2 = models.TextField(null=True, blank=True)
+    title_3 = models.CharField(max_length=50, null=True, blank=True)
+    description_3 = models.TextField(null=True, blank=True)
+    title_4 = models.CharField(max_length=50, null=True, blank=True)
+    description_4 = models.TextField(null=True, blank=True)
+    title_5 = models.CharField(max_length=50, null=True, blank=True)
+    description_5 = models.TextField(null=True, blank=True)
+
+    @property
+    def is_used(self):
+        fact_post = InstagramPostFact.objects.filter(fact=self)
+        if fact_post:
+            return True
+        else:
+            return False
+
+    def __str__(self):
+        is_used = ''
+        if self.is_used:
+            is_used = ' - USED'
+        return f"{self.id} - {self.place} - {self.title}{is_used}"
+
+
+
+class InstagramPostFact(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
     published_date = models.DateTimeField(null=True)
     is_published = models.BooleanField(default=False)
     is_image_generated = models.BooleanField(default=False)
+    fact = models.ForeignKey(Fact, on_delete=models.CASCADE, null=True, blank=True)
+
 
     def generate_image(self):
         service = InstagramService()
