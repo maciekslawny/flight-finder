@@ -8,73 +8,199 @@
 #             'naglowek1': "podpunkt1", 'naglowek2': "podpunkt2", 'naglowek3: "podpunkt3", 'naglowek4: "podpunkt4", 'naglowek5": "podpunkt5"
 #          ]
 #      }  przygotuj w formacie programistycznym.
-
+#
 
 
 # kategorie - beach  (plaze, morze), food (posilki, restauracje), culture (zamki, zabytki, rzezby) , fun  (drinki, impreza, automaty do gier, koncerty) , sport (bieganie, plywanie, surfowanie) , activity (gory, chodzenie po gorach, aparat, zwiedzanie)
 # beach, activity,  culture, food, fun, sport
-alicante_facts = [
+alicante_facts=[]
+
+rome_facts = [
     {
-        "miejsce": "Alicante",
-        "tytuł": "Najlepsze plaże i zatoczki w Alicante",
-        "category": "beach",
-        "podpunkty": {
-            "Plaża Postiguet": "Znana ze złocistego piasku i czystych wód, idealna do opalania i relaksu.",
-            "Plaża San Juan": "Jedna z najpopularniejszych plaż w Alicante, o długości 7 kilometrów, oferuje szeroką gamę atrakcji i sportów wodnych.",
-            "Zatoczka Tabarca": "Mała wyspa położona niedaleko wybrzeża Alicante, słynna z krystalicznie czystej wody i doskonałych miejsc do nurkowania.",
-            "Plaża La Granadella": "Urokliwa plaża z turkusowymi wodami i otoczeniem klifów, idealna do spokojnego wypoczynku i nurkowania.",
-            "Plaża El Postiguet": "Popularna plaża miejska w samym centrum Alicante, oferująca szeroki wybór barów i restauracji tuż przy brzegu morza."
+        "place": "Rzym",
+        "title": "Najlepsze widoki w Wiecznym Mieście",
+        "category": "activity",
+        "description": "Odkryj magiczne zakątki Rzymu, gdzie możesz podziwiać zapierające dech w piersiach widoki 🏛️🌆. Przygotuj aparat, bo te miejsca zapewnią Ci niezapomniane zdjęcia!",
+        "hashtags": "#Rzym #widoki #zabytki #podroze #architektura #turystyka #Wlosy #kultura #wakacje #instatravel",
+        "items": {
+            "Panteon": "Starożytny budynek z niezwykłą kopułą, który zapiera dech w piersiach swoim wnętrzem.",
+            "Wzgórze Aventino": "Znajdź Klucz do Rzymu na Wzgórzu Aventino i podziwiaj panoramę miasta z Jardin des Oranges.",
+            "Wzgórze Gianicolo": "Obejrzyj codzienny pokaz salutów armatnich na Wzgórzu Gianicolo o zmierzchu.",
+            "Taras widokowy Castel Sant'Angelo": "Znajdź spokój wśród historii na tarasie widokowym Castel Sant'Angelo.",
+            "Kolejka linowa na Janiculum": "Podziwiaj miasto z góry, jadąc kolejką linową na Janiculum."
         }
     },
     {
-        "miejsce": "Alicante",
-        "tytuł": "Kulinarne doznania Alicante",
+        "place": "Rzym",
+        "title": "Najbardziej niezwykłe potrawy rzymskie",
         "category": "food",
-        "podpunkty": {
-            "Paella Alicante": "Tradycyjne danie z ryżu, kurczaka i warzyw, charakterystyczne dla regionu Alicante.",
-            "Turron": "Słodka przekąska z miodu, migdałów i jajek, bardzo popularna w Alicante, szczególnie podczas świąt Bożego Narodzenia.",
-            "Gazpacho": "Chłodna zupa pomidorowa z warzyw, idealna na gorące dni, popularna w całej Hiszpanii, w tym w Alicante.",
-            "Fideuà": "Podobna do paelli, zamiast ryżu zawiera makaron, zazwyczaj serwowana z owocami morza, typowa potrawa alicantyńska.",
-            "Arroz a Banda": "Klasyczne danie z ryżu gotowanego w bulionie z owocami morza, często podawane z alioli, typowe dla wybrzeża Alicante."
+        "description": "Przysmak dla podniebienia! Rzymska kuchnia to prawdziwa uczta dla zmysłów 😋🍝. Oto kilka dań, które musisz spróbować, będąc w Rzymie.",
+        "hashtags": "#Rzym #kuchnia #wloska #smaki #podroze #culinary #foodie #pasta #pizza #gelato",
+        "items": {
+            "Carciofi alla Romana": "Liście karczochów gotowane z olejem, czosnkiem i miętą, to prawdziwa rzymska rozkosz.",
+            "Cacio e Pepe": "Pasta z serem pecorino, pieprzem i oliwą z oliwek - prostota, która urzeka smakiem.",
+            "Supplì": "Krokiety ryżowe z mozzarellą, panierowane i smażone, idealne na przekąskę.",
+            "Saltimbocca alla Romana": "Cienkie plastry cielęciny z szynką i szałwią, zanurzone w winie białym - prawdziwy rzymski smak.",
+            "Gelato": "Nie zapomnij o deserze! Rzym oferuje pyszne gelato w wielu smakach, które musisz spróbować."
         }
     },
     {
-        "miejsce": "Alicante",
-        "tytuł": "Najlepsze zabytki i atrakcje Alicante",
-        "category": "culture",
-        "podpunkty": {
-            "Zamek Santa Barbara": "Jeden z największych zamków w Hiszpanii, z pięknymi widokami na miasto i morze.",
-            "Muzeum Archeologiczne Alicante": "Bogata kolekcja artefaktów archeologicznych, obejmująca okresy od prehistorii do średniowiecza.",
-            "Wielka Synagoga Alicante": "Jedna z najlepiej zachowanych średniowiecznych synagog w Hiszpanii, z interesującymi eksponatami i wystawami.",
-            "Basílica de Santa María": "Gotycki kościół z XIII wieku, z bogatym wystrojem wnętrza i imponującymi witrażami.",
-            "Dzielnica Barrio Santa Cruz": "Urokliwa dzielnica z wąskimi uliczkami, kolorowymi domami i pięknymi widokami na morze, idealna na spacer."
-        }
-    },
-    {
-        "miejsce": "Alicante",
-        "tytuł": "Nocne życie w Alicante",
+        "place": "Rzym",
+        "title": "Sekretne zakątki Rzymu",
         "category": "fun",
-        "podpunkty": {
-            "Port of Alicante": "Popularne miejsce na wieczorne spacery z widokiem na morze oraz na drinka w jednej z licznych barów i klubów.",
-            "El Barrio": "Tętniąca życiem dzielnica nocna, pełna barów, klubów i restauracji, idealna na wieczór z przyjaciółmi.",
-            "Kasyno Alicante": "Dla miłośników hazardu, oferuje szeroki wybór gier, od automatów po poker, oraz restaurację i bary.",
-            "Plaza del Ayuntamiento": "Centralny plac w Alicante, który wieczorem ożywa dzięki ulicznym artystom, muzyce na żywo i licznej restauracji.",
-            "Club Tramps": "Jeden z najpopularniejszych klubów nocnych w Alicante, znany z imprez tematycznych i znakomitej muzyki."
+        "description": "Odkryj ukryte perły Rzymu, które nie znajdziesz w przewodnikach turystycznych! 🤫🗝️. Te miejsca zapewnią Ci wyjątkowe doświadczenia i niezapomniane wspomnienia.",
+        "hashtags": "#Rzym #tajemnice #ukryteperly #podroze #wakacje #exploration #offthebeatenpath #Italy #travelhidden #adventure",
+        "items": {
+            "Giardino degli Aranci": "Spaceruj po ogrodzie pomarańczowym, skąd roztacza się widok na Wzgórze Aventino.",
+            "Basilica di San Clemente": "Odkryj warstwy historii pod tym kościołem, kryjące tajemnicze podziemia.",
+            "Cimitero Acattolico": "Przejdź się po cmentarzu dla niekatolików, gdzie spoczywają znani artyści, poeci i pisarze.",
+            "Via Margutta": "Spaceruj uliczkami artystycznej dzielnicy, gdzie mieszkał Gregory Peck w filmie 'Rzymskie wakacje'.",
+            "Sant'Eustachio il Caffè": "Znajdź ukrytą kawiarnię, gdzie serwują najsmaczniejszą kawę w Rzymie."
         }
     },
     {
-        "miejsce": "Alicante",
-        "tytuł": "Alicante dla miłośników sportów wodnych",
+        "place": "Rzym",
+        "title": "Najciekawsze fakty o Rzymie",
+        "category": "facts",
+        "description": "Rzym to miasto pełne fascynujących faktów i ciekawostek historycznych 📚🏟️. Oto kilka rzeczy, których być może nie wiesz o Wiecznym Mieście.",
+        "hashtags": "#Rzym #fakty #historia #kuriozum #podroze #wiedza #ciekawostki #Italy #archeologia #zwiedzanie",
+        "items": {
+            "Koloseum": "Amfiteatr Flawiuszy, znany jako Koloseum, był największym amfiteatrem starożytnego Rzymu.",
+            "Fontanna di Trevi": "Wyrzucanie monet do Fontanny di Trevi zapewnia powrót do Rzymu - legenda, która przetrwała wieki.",
+            "Święty Piotr": "Bazylika św. Piotra w Watykanie jest największym kościołem na świecie, zbudowanym nad grobem św. Piotra.",
+            "Język lacina": "Łacina, język starożytnego Rzymu, wpłynęła na wiele języków europejskich, w tym włoski, hiszpański i francuski.",
+            "Siedem wzgórz": "Rzym został zbudowany na siedmiu wzgórzach: Aventino, Caelio, Capitoline, Esquilino, Palatino, Quirinal i Viminal."
+        }
+    },
+    {
+        "place": "Rzym",
+        "title": "Najpiękniejsze fontanny w Rzymie",
+        "category": "culture",
+        "description": "Rzym słynie z pięknych fontann, które są nie tylko źródłem wody, ale również inspiracją dla wielu artystów 💦🎨. Przejdź się po mieście i odkryj te malownicze arcydzieła wodnej sztuki!",
+        "hashtags": "#Rzym #fontanny #sztuka #architektura #podroze #kultura #Wlosy #fontannymiejskie #woda #turystyka",
+        "items": {
+            "Fontanna di Trevi": "Najbardziej ikoniczna fontanna w Rzymie, słynąca z romantycznych tradycji rzucających monetę na powrót do miasta.",
+            "Fontanna Czterech Rzek": "Znajdująca się na Piazza Navona, zbudowana przez Berniniego, przedstawia cztery rzeki reprezentujące cztery kontynenty.",
+            "Fontanna del Tritone": "Fontanna przedstawiająca tritona na Piazza Barberini, zaprojektowana przez Berniniego, jest arcydziełem barokowej rzeźby.",
+            "Fontanna delle Tartarughe": "Fontanna z czterema żółwiami, znajdująca się na Piazza Mattei, to jedno z najbardziej urokliwych miejsc w Rzymie.",
+            "Fontanna del Pantheon": "Zbudowana na zamówienie papieża Klemensa XI, znajdująca się obok Panteonu, zachwyca swoją prostotą i elegancją."
+        }
+    },
+    {
+        "place": "Rzym",
+        "title": "Sportowe atrakcje w Rzymie",
         "category": "sport",
-        "podpunkty": {
-            "Windsurfing na Playa de San Juan": "Idealne miejsce do uprawiania windsurfingu dzięki silnym wiatrom i doskonałym warunkom na plaży San Juan.",
-            "Nurkowanie w Zatoce Tabarca": "Krystalicznie czysta woda i bogate życie morskie sprawiają, że nurkowanie w Zatoce Tabarca jest niezapomnianym doświadczeniem.",
-            "Kitesurfing na Playa de Arenales del Sol": "Znana z silnych wiatrów, plaża Arenales del Sol jest doskonałym miejscem do kitesurfingu dla początkujących i zaawansowanych.",
-            "Żeglarstwo w Porcie Alicante": "Port Alicante oferuje szeroki wybór zajęć związanych z żeglarstwem, od wynajmu łodzi po kursy żeglarskie.",
-            "Paddleboarding na Costa Blanca": "Spokojne wody Morza Śródziemnego sprawiają, że paddleboarding jest popularnym sportem wodnym na Costa Blanca, idealnym dla całej rodziny."
+        "description": "Rzym to nie tylko miasto sztuki i historii, ale także miejsce, gdzie można aktywnie spędzić czas na świeżym powietrzu 🏃⚽. Oto kilka sportowych atrakcji, które warto odwiedzić podczas pobytu w Wiecznym Mieście!",
+        "hashtags": "#Rzym #sport #aktywnosc #fitness #podroze #zabawa #Wlosy #wakacje #running #tenis",
+        "items": {
+            "Jogging w Villa Borghese": "Spaceruj lub biegnij po parku Villa Borghese, ciesząc się zielonymi terenami i pięknymi widokami.",
+            "Tenis na Foro Italico": "Zagraj w tenisa na kortach Foro Italico, gdzie odbywają się prestiżowe turnieje tenisowe, takie jak Internazionali BNL d'Italia.",
+            "Jazda na rowerze wzdłuż Via Appia Antica": "Przejażdżka rowerowa wzdłuż starożytnego Via Appia Antica zapewni Ci niezapomniane widoki i wrażenia.",
+            "Pływanie w basenie olimpijskim Piscina delle Rose": "Zanurz się w wodach basenu olimpijskiego Piscina delle Rose i poczuj się jak prawdziwy olimpijczyk.",
+            "Kajakarstwo na Tybrze": "Zobacz Rzym z innej perspektywy, pływając kajakiem po malowniczym rzece Tybr."
+        }
+    },
+    {
+        "place": "Rzym",
+        "title": "Najlepsze plaże w okolicach Rzymu",
+        "category": "beach",
+        "description": "Chociaż Rzym nie jest typowym kurortem nadmorskim, to w okolicach miasta znajdują się piękne plaże, gdzie można odpocząć i złapać trochę słońca ☀️🌊. Oto kilka miejsc, które warto odwiedzić, by uciec od zgiełku miasta i zrelaksować się na plaży!",
+        "hashtags": "#Rzym #plaże #morze #wypoczynek #podroze #wakacje #Wlosy #relaks #płaskielądy #letnieprzyjemnosci",
+        "items": {
+            "Spiaggia di Ostia": "Najbliższa plaża do Rzymu, z łatwym dostępem komunikacyjnym i szeroką ofertą restauracji i barów.",
+            "Santa Severa": "Urocza miejscowość nadmorska z piękną plażą i średniowiecznym zamkiem, idealna na rodzinne wypady.",
+            "Sperlonga": "Malownicza wioska nadmorska z białymi domami i kryształowo czystą wodą, zachwycająca turystów swoim urokiem.",
+            "Anzio": "Popularny kurort nadmorski, znanego z plaż i zabytków związanych z II wojną światową, takich jak Villa di Nerone i Pola di Anzio.",
+            "Sabaudia": "Bogata w białe plaże i turkusowe wody, Sabaudia to doskonałe miejsce dla miłośników natury i spokoju."
         }
     }
 ]
+paris_facts = [
+    {
+        "place": "Paryż",
+        "title": "Najlepsze widoki w Paryżu",
+        "category": "culture",
+        "description": "Paryż - miasto miłości i świateł! To tutaj można zanurzyć się w niepowtarzalnej atmosferze podziwiając zabytki i widoki, które zapierają dech w piersiach. 💖✨",
+        "hashtags": "#Paryż #widoki #miastoswiateł #romantycznie #zabytki #piękno #podróże #kultura #architektura #inspiracja",
+        "items": {
+            "Wieża Eiffela": "Symbol Paryża i jeden z najbardziej rozpoznawalnych punktów widokowych na świecie.",
+            "Montmartre": "Urokliwa dzielnica, z której roztacza się przepiękny widok na panoramę miasta.",
+            "Łuk Triumfalny": "Niezwykła architektura, która zachwyca zarówno w dzień, jak i w nocy.",
+            "Bazylika Sacré-Cœur": "Miejsce, które zapewnia zapierający dech w piersiach widok na cały Paryż.",
+            "Pałac Ludwików": "Historyczna budowla z przepięknymi ogrodami, idealna na romantyczny spacer."
+        }
+    },
+    {
+        "place": "Paryż",
+        "title": "Kulinarne rozkosze w Paryżu",
+        "category": "food",
+        "description": "Paryż to raj dla smakoszy! Francuska kuchnia zachwyca swoją różnorodnością i wyrafinowanym smakiem. 🍽️🥐",
+        "hashtags": "#Paryż #kulinaria #francuskakuchnia #smaki #wyrafinowanie #smakosze #jedzenie #pyszne #restauracje #gastronomia",
+        "items": {
+            "Kroissanty": "Ikona francuskiego smaku, świeże i chrupiące na każdym kroku.",
+            "Foie Gras": "Niezapomniane doznania dla podniebienia, wykwintny przysmak kuchni francuskiej.",
+            "Tartare": "Danie, które zachwyca świeżością i aromatem, obowiązkowy punkt na liście kulinarnej Paryża.",
+            "Ratatouille": "Klasyczny przepis prosto z Francji, pełen kolorów i smaków śródziemnomorskich warzyw.",
+            "Makaroniki": "Słodkie delicje, których wyjątkowy smak trudno opisać - trzeba spróbować!"
+        }
+    },
+    {
+        "place": "Paryż",
+        "title": "Sekrety Paryskich parków",
+        "category": "activity",
+        "description": "Paryskie parki to oazy spokoju w sercu miasta, pełne zielonych zakątków i ukrytych skarbów. 🌳🌷",
+        "hashtags": "#Paryż #parki #spacer #natura #spokój #zielono #relaks #ogród #piękno #ukryteskarby",
+        "items": {
+            "Park Luxembourg": "Urokliwe miejsce, gdzie można odpocząć na ławce obserwując ptaki i kwiaty.",
+            "Park Buttes-Chaumont": "Niezwykła przestrzeń pełna wodospadów, grot i ukrytych ścieżek do odkrycia.",
+            "Ogród Tulieries": "Historyczny ogród zaprojektowany dla króla Ludwika XIV, idealny na romantyczny spacer.",
+            "Park Monceau": "Elegancki park z malowniczymi alejkami i starannie zaprojektowanymi ogrodami.",
+            "Les Berges de Seine": "Nowoczesne nabrzeże nad Sekwaną, gdzie można odpocząć z dala od zgiełku miasta."
+        }
+    },
+    {
+        "place": "Paryż",
+        "title": "Kulturalne doznania w mieście świateł",
+        "category": "culture",
+        "description": "Paryż to nie tylko Wieża Eiffela i Luwr! To także miasto sztuki, kultury i inspiracji, które przyciąga artystów z całego świata. 🎨🎭",
+        "hashtags": "#Paryż #kultura #sztuka #muzea #teatr #inspiracja #artystycznie #architektura #historia #miejsce #luwr",
+        "items": {
+            "Muzeum Luwru": "Największe muzeum sztuki na świecie, pełne arcydzieł malarstwa, rzeźby i antyków.",
+            "Centrum Pompidou": "Nowoczesna przestrzeń, w której można podziwiać sztukę współczesną i performance.",
+            "Opéra Garnier": "Budowla o niezwykłej architekturze, gdzie można zanurzyć się w atmosferę opery i baletu.",
+            "Muzeum d'Orsay": "Kolekcja dzieł sztuki XIX wieku, w tym impresjonistyczne arcydzieła Moneta, Degasa i innych.",
+            "Muzeum Rodina": "Poświęcone jednemu z najwybitniejszych francuskich rzeźbiarzy, gdzie można podziwiać jego prace."
+        }
+    },
+    {
+        "place": "Paryż",
+        "title": "Zakamarki romantycznego Paryża",
+        "category": "fun",
+        "description": "Paryż to miasto zakochanych! Każda uliczka, każdy zaułek kryje w sobie romantyczne historie i magiczne chwile. 💑💞",
+        "hashtags": "#Paryż #romantyzm #miłosnehistorie #magicznechwilie #zakochani #spacer #uliczki #kawiarnie #światło #nastroj",
+        "items": {
+            "Most Zakochanych": "Symbol miłości, gdzie zakochani z całego świata zostawiają kłódki jako wyraz swojej miłości.",
+            "Kawiarnia Le Consulat": "Urokliwe miejsce, gdzie można poczuć się jak bohater filmu Woody'ego Allena.",
+            "Place des Vosges": "Najstarszy plac w Paryżu, idealny na romantyczny piknik pod dębami.",
+            "Seine River Cruise": "Rejs łodzią po Sekwanie, podczas którego można podziwiać miasto w romantycznej scenerii nocą.",
+            "Cmentarz Père-Lachaise": "Spacer po tym zabytkowym cmentarzu pełnym grobów sławnych osobistości to wyjątkowe doświadczenie."
+        }
+    },
+    {
+        "place": "Paryż",
+        "title": "Sportowe atrakcje w mieście świateł",
+        "category": "sport",
+        "description": "Paryż to nie tylko kultura i historia, ale także miejsce, gdzie można aktywnie spędzać czas! 🏃⚽",
+        "hashtags": "#Paryż #sport #aktywność #bieganie #spacer #aktywnie #zabawa #rekreacja #fitness #ruch",
+        "items": {
+            "Jogging w Parku Buttes-Chaumont": "Wspaniała trasa biegowa w otoczeniu zieleni i pięknych widoków.",
+            "Wspinaczka na ściance": "Adrenalina i aktywność fizyczna w centrum miasta, świetna zabawa dla wszystkich wieków.",
+            "Joga na brzegu Sekwany": "Relaksująca praktyka jogi w otoczeniu natury i spokoju rzeki.",
+            "Rowery Vélib'": "Wypożycz rower i zwiedzaj miasto na dwóch kółkach, to świetna forma aktywności fizycznej.",
+            "Pływanie w basenie Molitor": "Zanurz się w luksusowym basenie z widokiem na Wieżę Eiffela, idealne miejsce na relaks i ruch."
+        }
+    }
+    ]
 
 
 malaga_facts = [
@@ -398,20 +524,6 @@ malaga_facts = [
             "Feria de Malaga": "To kolejne ważne święto miasta, obchodzone w sierpniu, które oferuje wiele atrakcji, takich jak koncerty, wystawy, pokazy sztucznych ogni i tradycyjne tańce flamenco.",
             "Noche de San Juan": "To letnie święto obchodzone w nocy z 23 na 24 czerwca, które jest czasem zabawy, tańca, ognisk i skakania przez ognie, aby celebrować nadejście lata.",
             "Feria de la Virgen de la Victoria": "To coroczne święto obchodzone na początku września, które upamiętnia zwycięstwo chrześcijan nad muzułmanami w 1487 roku, oferując wiele atrakcji kulturalnych i religijnych."
-        }
-    },
-    {
-        "place": "Malaga",
-        "title": "Najciekawsze atrakcje dla dzieci w Maladze",
-        "category": "fun",
-        "description": "Malaga to także miejsce, gdzie dzieci mogą znaleźć wiele atrakcji i rozrywek, które zapewnią im niezapomniane wrażenia i doświadczenia 🎈. Odkryjcie najciekawsze atrakcje dla dzieci w Maladze, które sprawią, że cała rodzina będzie się świetnie bawić i cieszyć czasem razem 🚀.",
-        "hashtags": "#Malaga #dzieci #atrakcje #rozrywka #rodzina #zabawa #przygoda #atrakcjeDlaDzieci #parkRozrywki #edukacja",
-        "items": {
-            "Aqua Velis Water Park": "To park wodny oferuje wiele basenów, zjeżdżalni, atrakcji wodnych i stref relaksu, które zapewnią dzieciom mnóstwo zabawy i radości wodnych przygód.",
-            "Bioparc Fuengirola": "To unikalny ogród zoologiczny oferuje możliwość obserwacji egzotycznych zwierząt i ptaków w ich naturalnym środowisku, co stanowi edukacyjne i ekscytujące doświadczenie dla dzieci.",
-            "Playa de la Malagueta": "To piaszczysta plaża w Maladze oferuje wiele atrakcji dla dzieci, takich jak plac zabaw, gry plażowe i możliwość kąpieli w ciepłych wodach Morza Śródziemnego.",
-            "Tivoli World": "To park rozrywki oferuje wiele atrakcji, takich jak karuzele, roller coaster, dmuchane zamki i liczne gry i zabawy, które zapewnią dzieciom niezapomniane wrażenia i radość.",
-            "Interactive Music Museum": "To interaktywne muzeum muzyczne oferuje wiele interaktywnych wystaw i eksponatów, które pozwolą dzieciom na zabawę, naukę i eksplorację świata muzyki."
         }
     },
     {

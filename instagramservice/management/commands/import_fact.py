@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand, CommandError
 from flightfinder.services import CheapestTicketPlanService, TicketPlanFinder
 from instagramservice.models import InstagramPost, InstagramPostFact, Fact
 from instagramservice.cities_services import AlicanteService
-from instagramservice.facts import alicante_facts, malaga_facts
+from instagramservice.facts import malaga_facts, paris_facts, rome_facts
 
 class Command(BaseCommand):
     help = 'Closes the specified poll for voting'
@@ -28,7 +28,7 @@ class Command(BaseCommand):
 
         # city_fact = malaga_facts[15]
 
-        for city_fact in malaga_facts:
+        for city_fact in rome_facts:
 
             if Fact.objects.filter(title=city_fact['title'].upper()):
                 print('Fakt juz istnial - ', city_fact['title'])
