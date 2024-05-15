@@ -108,10 +108,47 @@ class ImportFlightsData():
             return 'https://www.google.com/travel/flights/search?tfs=CBwQAhorEgoyMDI0LTA0LTExKABqDAgDEggvbS8wMzVtNnINCAMSCS9tLzAxOTc4ZEABSAFwAYIBCwj___________8BmAEC&hl=pl&curr=PLN'
         if city_departure == 'Malaga' and city_arrival == 'Gdansk':
             return 'https://www.google.com/travel/flights/search?tfs=CBwQAhorEgoyMDI0LTA0LTExKABqDQgDEgkvbS8wMTk3OGRyDAgDEggvbS8wMzVtNkABSAFwAYIBCwj___________8BmAEC&hl=pl&curr=PLN'
+
+        if city_departure == 'Gdansk' and city_arrival == 'Barcelona':
+            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhoqEgoyMDI0LTA4LTA3KABqDAgDEggvbS8wMzVtNnIMCAMSCC9tLzAxZjYyQAFIAXABggELCP___________wGYAQI&hl=pl&curr=PLN'
+        if city_departure == 'Barcelona' and city_arrival == 'Gdansk':
+            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhoqEgoyMDI0LTA4LTA3KABqDAgDEggvbS8wMWY2MnIMCAMSCC9tLzAzNW02QAFIAXABggELCP___________wGYAQI&hl=pl&curr=PLN'
+
         if city_departure == 'Gdansk' and city_arrival == 'Neapol':
             return 'https://www.google.com/travel/flights/search?tfs=CBwQAhoqEgoyMDI0LTA0LTExKABqDAgDEggvbS8wMzVtNnIMCAMSCC9tLzBmaHN6QAFIAXABggELCP___________wGYAQI&hl=pl&curr=PLN'
         if city_departure == 'Neapol' and city_arrival == 'Gdansk':
             return 'https://www.google.com/travel/flights/search?tfs=CBwQAhoqEgoyMDI0LTA0LTExKABqDAgDEggvbS8wZmhzenIMCAMSCC9tLzAzNW02QAFIAXABggELCP___________wGYAQI&hl=pl&curr=PLN'
+        if city_departure == 'Gdansk' and city_arrival == 'Piza':
+            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhoqEgoyMDI0LTA1LTIzKABqDAgDEggvbS8wMzVtNnIMCAMSCC9tLzA2NHhwQAFIAXABggELCP___________wGYAQI&hl=pl&curr=PLN'
+        if city_departure == 'Piza' and city_arrival == 'Gdansk':
+            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhoqEgoyMDI0LTA1LTIzKABqDAgDEggvbS8wNjR4cHIMCAMSCC9tLzAzNW02QAFIAXABggELCP___________wGYAQI&hl=pl&curr=PLN'
+        if city_departure == 'Gdansk' and city_arrival == 'Brindisi':
+            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhorEgoyMDI0LTA4LTA3KABqDAgDEggvbS8wMzVtNnINCAMSCS9tLzAyMnZsM0ABSAFwAYIBCwj___________8BmAEC&hl=pl&curr=PLN'
+        if city_departure == 'Brindisi' and city_arrival == 'Gdansk':
+            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhorEgoyMDI0LTA4LTA3KABqDQgDEgkvbS8wMjJ2bDNyDAgDEggvbS8wMzVtNkABSAFwAYIBCwj___________8BmAEC&hl=pl&curr=PLN'
+        if city_departure == 'Gdansk' and city_arrival == 'Bergamo':
+            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhorEgoyMDI0LTEwLTE2KABqDAgDEggvbS8wMzVtNnINCAMSCS9tLzAxanA0c0ABSAFwAYIBCwj___________8BmAEC&hl=pl&curr=PLN'
+        if city_departure == 'Bergamo' and city_arrival == 'Gdansk':
+            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhorEgoyMDI0LTEwLTE2KABqDQgDEgkvbS8wMWpwNHNyDAgDEggvbS8wMzVtNkABSAFwAYIBCwj___________8BmAEC&hl=pl&curr=PLN'
+        if city_departure == 'Gdansk' and city_arrival == 'Rzym':
+            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhoqEgoyMDI0LTA4LTA3KABqDAgDEggvbS8wMzVtNnIMCAMSCC9tLzA2YzYyQAFIAXABggELCP___________wGYAQI&hl=pl&curr=PLN'
+        if city_departure == 'Rzym' and city_arrival == 'Gdansk':
+            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhoqEgoyMDI0LTA4LTA3KABqDAgDEggvbS8wNmM2MnIMCAMSCC9tLzAzNW02QAFIAXABggELCP___________wGYAQI&hl=pl&curr=PLN'
+
+
+        if city_departure == 'Gdansk' and city_arrival == 'Zadar':
+            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhoqEgoyMDI0LTA4LTA3KABqDAgDEggvbS8wMzVtNnIMCAMSCC9tLzA2YzYyQAFIAXABggELCP___________wGYAQI&hl=pl&curr=PLN'
+        if city_departure == 'Zadar' and city_arrival == 'Gdansk':
+            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhorEgoyMDI0LTA4LTA3KABqDQgDEgkvbS8wMXFxdDhyDAgDEggvbS8wMzVtNkABSAFwAYIBCwj___________8BmAEC&hl=pl&curr=PLN'
+
+        if city_departure == 'Gdansk' and city_arrival == 'Paryz':
+            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhoqEgoyMDI0LTA4LTA3KABqDAgDEggvbS8wMzVtNnIMCAMSCC9tLzA1cXRqQAFIAXABggELCP___________wGYAQI&hl=pl&curr=PLN'
+        if city_departure == 'Paryz' and city_arrival == 'Gdansk':
+            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhoqEgoyMDI0LTA4LTA3KABqDAgDEggvbS8wNXF0anIMCAMSCC9tLzAzNW02QAFIAXABggELCP___________wGYAQI&hl=pl&curr=PLN'
+
+
+
+
         if city_departure == 'Warszawa' and city_arrival == 'Alicante':
             return  'https://www.google.com/travel/flights/search?tfs=CBwQAhopEgoyMDI0LTEwLTE2KABqDAgDEggvbS8wODFtX3ILCAMSBy9tLzB6YzZAAUgBcAGCAQsI____________AZgBAg&hl=pl&curr=PLN'
         if city_departure == 'Alicante' and city_arrival == 'Warszawa':
@@ -148,6 +185,7 @@ class ImportFlightsData():
         time.sleep(2)
 
     def get_cities(self):
+        time.sleep(2)
         self.city_departure_name = self.replace_special_chars(
             self.driver.find_element(By.XPATH, './/*[@aria-label="Skąd lecisz?"]').get_attribute("value"))
         self.city_arrival_name = self.replace_special_chars(
@@ -214,9 +252,11 @@ class ImportFlightsData():
                     flight_price.save()
                     print(flight_price, 'Created!')
 
+    def quit_driver(self):
+        self.driver.quit()
+
     def import_flights(self, departure_city, arrival_city):
 
-        self.setup_chrome_driver()
         logger.info('import_flights')
 
         for i, num in enumerate([1, 2]):
@@ -235,5 +275,5 @@ class ImportFlightsData():
             self.follow_months_price_table()
             self.scan_all_months()
 
-        self.driver.quit()
+
 

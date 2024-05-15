@@ -27,7 +27,6 @@ class Command(BaseCommand):
         to_search_date = datetime.now().date() + timedelta(days=100)
         print(from_search_date, to_search_date)
 
-        city_fact = malaga_facts[15]
 
 
         facts = [obj for obj in Fact.objects.all() if obj.is_used == False]
@@ -69,7 +68,8 @@ class Command(BaseCommand):
 
 
         new_post = InstagramPostFact(
-            fact=facts_filtered.first()
+            # fact=facts_filtered.first()
+            fact = Fact.objects.get(id=97)
         )
         new_post.save()
 

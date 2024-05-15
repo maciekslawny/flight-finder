@@ -12,17 +12,24 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import logging
 
+
 @shared_task
-def import_tickets(city_departure, city_arrival):
-    # destinations_list = [['Gdansk', 'Alicante'], ['Gdansk', 'Malaga'], ['Gdansk', 'Neapol']]
-    #
-    # for destination in destinations_list:
-    #
-    #     import_service = ImportFlightsData()
-    #     import_service.import_flights(destination[0], destination[1])
-    # print("Hello from Celery Beat!")
+def import_tickets(departure_city=None, arrival_city=None):
+    destinations_list = [['Gdansk', 'Alicante'], ['Gdansk', 'Malaga'], ['Gdansk', 'Neapol'], ['Gdansk', 'Piza'],
+                         ['Gdansk', 'Bergamo'], ['Gdansk', 'Brindisi'], ['Gdansk', 'Rzym'], ['Gdansk', 'Barcelona'], ['Gdansk', 'Zadar'], ['Gdansk', 'Paryz']]
+
     import_service = ImportFlightsData()
-    import_service.import_flights(city_departure, city_arrival)
+    import_service.setup_chrome_driver()
+    if departure_city and arrival_city:
+        import_service.import_flights(departure_city, arrival_city)
+    else:
+        for destination in destinations_list:
+            try:
+                import_service.import_flights(destination[0], destination[1])
+            except:
+                print('Error with ', destination[0], destination[1])
+    import_service.quit_driver()
+
 
 def replace_special_chars(text):
     # Definiujemy mapowanie specjalnych znaków na ich odpowiedniki
@@ -36,6 +43,7 @@ def replace_special_chars(text):
         text = text.replace(special_char, normal_char)
 
     return text
+
 
 def get_search_url(city_departure, city_arrival):
     if city_departure == 'Gdansk' and city_arrival == 'Alicante':
@@ -55,11 +63,13 @@ def get_search_url(city_departure, city_arrival):
     if city_departure == 'Alicante' and city_arrival == 'Warszawa':
         return 'https://www.google.com/travel/flights/search?tfs=CBwQAhopEgoyMDI0LTEwLTE2KABqCwgDEgcvbS8wemM2cgwIAxIIL20vMDgxbV9AAUgBcAGCAQsI____________AZgBAg&hl=pl&curr=PLN'
 
+
 months = {'styczeń': '01', 'luty': '02', 'marzec': '03', 'kwiecień': '04', 'maj': '05',
-                           'czerwiec': '06',
-                           'lipiec': '07', 'sierpień': '08', 'wrzesień': '09', 'październik': '10', 'listopad': '11',
-                           'grudzień': '12'}
+          'czerwiec': '06',
+          'lipiec': '07', 'sierpień': '08', 'wrzesień': '09', 'październik': '10', 'listopad': '11',
+          'grudzień': '12'}
 current_year = datetime.now().year
+
 
 @shared_task
 def import_tickets_test():
@@ -80,7 +90,6 @@ def import_tickets_test():
 
         # s = Service("/usr/bin/chromedriver")
         driver = webdriver.Chrome(options=chromeOptions)
-
 
         try:
 
@@ -114,7 +123,6 @@ def import_tickets_test():
                     city_arrival_instance = City.objects.get(name=city_arrival_name)
                 except:
                     city_arrival_instance = City.objects.create(name=city_arrival_name)
-
 
                 driver.find_elements(By.XPATH, "//*[@placeholder='Wylot']")[0].click()
 
@@ -171,54 +179,3 @@ def import_tickets_test():
         except:
             driver.quit()
             return 'ERROR'
-
-
-
-
-@shared_task
-def import_tickets_test_2():
-    destinations_list = [['Gdansk', 'Alicante'], ['Gdansk', 'Malaga'], ['Gdansk', 'Neapol'], ['Gdansk', 'Alicante'], ['Gdansk', 'Malaga'],]
-
-    for destination in destinations_list:
-
-        options = Options()
-        options.add_argument("−−incognito")
-        chromeOptions = Options()
-
-        chromeOptions.add_argument("--no-sandbox")
-        chromeOptions.add_argument("--disable-dev-shm-usage")
-        chromeOptions.add_argument('--headless')
-        chromeOptions.add_argument("--disable-extensions")
-        chromeOptions.add_argument("--ignore-certificate-errors")
-        chromeOptions.headless = True
-
-        # s = Service("/usr/bin/chromedriver")
-        driver = webdriver.Chrome(options=chromeOptions)
-
-
-
-
-        for i, num in enumerate([1, 2]):
-            if num == 1:
-                url = get_search_url(destination[0], destination[1])
-            else:
-                url = get_search_url(destination[1], destination[0])
-
-            driver.get(url)
-            time.sleep(2)
-            try:
-                print('accept_cookies')
-                button_accept = driver.find_elements(By.XPATH, "//button")[1]
-                button_accept.click()
-                time.sleep(1)
-            except:
-                pass
-
-            city_departure_name = replace_special_chars(
-                driver.find_element(By.XPATH, './/*[@aria-label="Skąd lecisz?"]').get_attribute("value"))
-            city_arrival_name = replace_special_chars(
-                driver.find_element(By.XPATH, './/*[@aria-label="Dokąd?"]').get_attribute("value"))
-
-            print(city_departure_name)
-
-        driver.quit()

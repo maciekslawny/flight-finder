@@ -4,7 +4,7 @@ from django.db import models
 
 from flightfinder.services import CheapestTicketPlanService, TicketPlanFinder
 from instagramservice.services import InstagramService
-from instagramservice.cities_services import AlicanteService
+from instagramservice.cities_services import AlicanteService, MalagaService, NaplesService
 
 # Create your models here.
 
@@ -26,6 +26,10 @@ class InstagramPost(models.Model):
         city_service = None
         if self.arrival_city == 'Alicante':
             city_service = AlicanteService()
+        elif self.arrival_city == 'Malaga':
+            city_service = MalagaService()
+        elif self.arrival_city == 'Neapol':
+            city_service = NaplesService()
         city_desc = city_service.get_random_description()
         hashtags = city_service.get_10_random_hashtags()
         result_description = (

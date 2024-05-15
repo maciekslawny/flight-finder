@@ -77,7 +77,13 @@ class InstagramService():
             if x == len(title_split) - 1:
                 result_words_list.append(flag_word)
 
+        longest_word = len(max(result_words_list, key=len))
 
+        font_size = 125
+        space = 130
+        if len(result_words_list) > 4 or longest_word>12:
+            font_size = 110
+            space = 115
 
         print(result_words_list)
 
@@ -88,7 +94,7 @@ class InstagramService():
         background = Image.open(f"instagramservice/images/instagram_posts_facts/background/{self.post_fact.fact.category}/{random.randint(1, file_count)}.jpg")
         W, H = 1080, 1080
         font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
-                                  125)  # Wybierz czcionkę i rozmiar
+                                  font_size)  # Wybierz czcionkę i rozmiar
         draw = ImageDraw.Draw(background)
 
         y = 150
@@ -99,7 +105,7 @@ class InstagramService():
             draw.text((40, (H-h)/2 + y), text, fill="#fdbd76", font=font)
             # draw.text((40, (H-h)/2 + y), text, fill="#fdbd76", font=font)
 
-            y = y + 130
+            y = y + space
 
         # Zapisz obraz jako plik JPEG
         background.save(f"instagramservice/images/instagram_posts_facts/post-fact-title-{self.post_fact.id}-1-tlo.jpg")

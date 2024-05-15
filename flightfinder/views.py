@@ -20,7 +20,7 @@ def home(request):
     finder = TicketPlanFinder(ticket_plan_service=finding_ticket_service)
 
     tickets = []
-    for city_string in ['Alicante', 'Malaga', 'Neapol']:
+    for city_string in ['Alicante', 'Malaga', 'Neapol', 'Piza', 'Bergamo', 'Brindisi', 'Rzym', 'Barcelona', 'Zadar', 'Paryz']:
         tickets = tickets + finder.get_tickets_plan(from_search_date, to_search_date, 1, 6, 'Gdansk', city_string)
     tickets = sorted(tickets, key=lambda x: x.total_price)
 
