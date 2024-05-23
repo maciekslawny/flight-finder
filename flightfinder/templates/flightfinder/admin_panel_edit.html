@@ -51,7 +51,7 @@
                       {% for image_id in images_ids %}
                     <div class="form-check">
                       <input class="form-check-input" type="radio" name="image_id" id="image_id" value="{{ image_id }}" {% if fact.img_id|add:0 == image_id|add:0 %}checked{% endif %}>
-                      <label class="form-check-label" for="gridRadios1"> 
+                      <label class="form-check-label" for="gridRadios1">
                         <img src="{% static 'instagramservice/images/instagram_posts_facts/background/' %}{{ fact.category }}/{{ image_id }}.jpg" class="w-25 p-3">
                       </label>
                     </div>

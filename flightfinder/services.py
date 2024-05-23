@@ -137,7 +137,7 @@ class ImportFlightsData():
 
 
         if city_departure == 'Gdansk' and city_arrival == 'Zadar':
-            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhoqEgoyMDI0LTA4LTA3KABqDAgDEggvbS8wMzVtNnIMCAMSCC9tLzA2YzYyQAFIAXABggELCP___________wGYAQI&hl=pl&curr=PLN'
+            return 'https://www.google.com/travel/flights/search?tfs=CBwQAhorEgoyMDI0LTA4LTA3KABqDAgDEggvbS8wMzVtNnINCAMSCS9tLzAxcXF0OEABSAFwAYIBCwj___________8BmAEC&hl=pl&curr=PLN'
         if city_departure == 'Zadar' and city_arrival == 'Gdansk':
             return 'https://www.google.com/travel/flights/search?tfs=CBwQAhorEgoyMDI0LTA4LTA3KABqDQgDEgkvbS8wMXFxdDhyDAgDEggvbS8wMzVtNkABSAFwAYIBCwj___________8BmAEC&hl=pl&curr=PLN'
 
