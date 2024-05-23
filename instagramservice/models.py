@@ -4,7 +4,7 @@ from django.db import models
 
 from flightfinder.services import CheapestTicketPlanService, TicketPlanFinder
 from instagramservice.services import InstagramService
-from instagramservice.cities_services import AlicanteService, MalagaService, NaplesService
+import instagramservice.cities_services as cities_services
 
 # Create your models here.
 
@@ -25,11 +25,26 @@ class InstagramPost(models.Model):
 
         city_service = None
         if self.arrival_city == 'Alicante':
-            city_service = AlicanteService()
+            city_service = cities_services.AlicanteService()
         elif self.arrival_city == 'Malaga':
-            city_service = MalagaService()
+            city_service = cities_services.MalagaService()
         elif self.arrival_city == 'Neapol':
-            city_service = NaplesService()
+            city_service = cities_services.NaplesService()
+        elif self.arrival_city == 'Barcelona':
+            city_service = cities_services.BarcelonaService()
+        elif self.arrival_city == 'Bergamo':
+            city_service = cities_services.BergamoService()
+        elif self.arrival_city == 'Brindisi':
+            city_service = cities_services.BrindisiService()
+        elif self.arrival_city == 'Paryz':
+            city_service = cities_services.ParisService()
+        elif self.arrival_city == 'Piza':
+            city_service = cities_services.PisaService()
+        elif self.arrival_city == 'Rzym':
+            city_service = cities_services.RomaService()
+        elif self.arrival_city == 'Zadar':
+            city_service = cities_services.ZadarService()
+
         city_desc = city_service.get_random_description()
         hashtags = city_service.get_10_random_hashtags()
         result_description = (
@@ -87,6 +102,7 @@ class Fact(models.Model):
     description_4 = models.TextField(null=True, blank=True)
     title_5 = models.CharField(max_length=50, null=True, blank=True)
     description_5 = models.TextField(null=True, blank=True)
+    img_id = models.IntegerField(default=1)
 
     @property
     def is_used(self):
@@ -95,6 +111,10 @@ class Fact(models.Model):
             return True
         else:
             return False
+
+    @property
+    def get_image_url(self):
+        return f'instagramservice/images/instagram_posts_facts/background/{ self.category }/{ self.img_id }.jpg'
 
     def __str__(self):
         is_used = ''

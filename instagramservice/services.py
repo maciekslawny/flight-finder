@@ -6,6 +6,7 @@ from instagrapi.types import StoryMention, StoryMedia, StoryLink, StoryHashtag
 from instagramservice.facts import alicante_facts, malaga_facts
 import os
 
+
 class InstagramService():
     def __init__(self):
         self.post = None
@@ -21,9 +22,22 @@ class InstagramService():
             background_image = 'neapol-tlo.jpg'
         if self.post.arrival_city == 'Malaga':
             background_image = 'malaga-tlo.jpg'
-
+        if self.post.arrival_city == 'Barcelona':
+            background_image = 'barcelona-tlo.jpg'
+        if self.post.arrival_city == 'Bergamo':
+            background_image = 'bergamo-tlo.jpg'
+        if self.post.arrival_city == 'Brindisi':
+            background_image = 'brindisi-tlo.jpg'
+        if self.post.arrival_city == 'Paryz':
+            background_image = 'paryz-tlo.jpg'
+        if self.post.arrival_city == 'Piza':
+            background_image = 'piza-tlo.jpg'
+        if self.post.arrival_city == 'Rzym':
+            background_image = 'rzym-tlo.jpg'
+        if self.post.arrival_city == 'Zadar':
+            background_image = 'zadar-tlo.jpg'
         # Wczytaj istniejący obrazek
-        background = Image.open(f"instagramservice/images/{background_image}")
+        background = Image.open(f"instagramservice/images/instagram_post_images/cities-bg/{background_image}")
 
         # Ustaw czcionkę i tekst
         font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
@@ -31,7 +45,6 @@ class InstagramService():
         draw = ImageDraw.Draw(background)
 
         # Uzyskaj granice obszaru zawierającego tekst
-
 
         text_price = draw.textbbox((0, -200), str(self.post.price) + ' PLN', font=font)
         text_price_position = ((background.width - text_price[2]) // 2, (background.height - text_price[3]) // 2)
@@ -50,12 +63,11 @@ class InstagramService():
         user_id = cl.user_id_from_username(ACCOUNT_USERNAME)
         medias = cl.user_medias(user_id, 20)
 
-        test = cl.photo_upload(f"instagramservice/images/instagram_post_images/post-{self.post.id}.jpg", self.post.description)
+        test = cl.photo_upload(f"instagramservice/images/instagram_post_images/post-{self.post.id}.jpg",
+                               self.post.description)
         print('RESPONSE TEST: ', test)
 
     from PIL import Image, ImageDraw, ImageFont
-
-
 
     def create_post_fact_images(self):
         title = self.post_fact.fact.title
@@ -81,7 +93,7 @@ class InstagramService():
 
         font_size = 125
         space = 130
-        if len(result_words_list) > 4 or longest_word>12:
+        if len(result_words_list) > 4 or longest_word > 12:
             font_size = 110
             space = 115
 
@@ -89,9 +101,11 @@ class InstagramService():
 
         files = os.listdir(f"instagramservice/images/instagram_posts_facts/background/{self.post_fact.fact.category}/")
         file_count = len(files)
+        img_id = random.randint(1, file_count)
         print('LICZBA PLIKOW', file_count)
 
-        background = Image.open(f"instagramservice/images/instagram_posts_facts/background/{self.post_fact.fact.category}/{random.randint(1, file_count)}.jpg")
+        background = Image.open(
+            f"instagramservice/images/instagram_posts_facts/background/{self.post_fact.fact.category}/{self.post_fact.fact.img_id}.jpg")
         W, H = 1080, 1080
         font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
                                   font_size)  # Wybierz czcionkę i rozmiar
@@ -99,10 +113,9 @@ class InstagramService():
 
         y = 150
         for text in result_words_list:
-
-            _, _, w, h = draw.textbbox((0, -200 + len(result_words_list)*150), text, font=font)
-            draw.text((40+5, (H-h)/2 + y +5), text, fill="#F9d9b8", font=font)
-            draw.text((40, (H-h)/2 + y), text, fill="#fdbd76", font=font)
+            _, _, w, h = draw.textbbox((0, -200 + len(result_words_list) * 150), text, font=font)
+            draw.text((40 + 5, (H - h) / 2 + y + 5), text, fill="#F9d9b8", font=font)
+            draw.text((40, (H - h) / 2 + y), text, fill="#fdbd76", font=font)
             # draw.text((40, (H-h)/2 + y), text, fill="#fdbd76", font=font)
 
             y = y + space
@@ -115,7 +128,6 @@ class InstagramService():
                  self.post_fact.fact.title_3: self.post_fact.fact.description_3,
                  self.post_fact.fact.title_4: self.post_fact.fact.description_4,
                  self.post_fact.fact.title_5: self.post_fact.fact.description_5}
-
 
         for number, fact in enumerate(items):
 
@@ -130,7 +142,7 @@ class InstagramService():
             font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
                                       100)  # Wybierz czcionkę i rozmiar
             draw = ImageDraw.Draw(background)
-            number_dot = str(number+1) + '.'
+            number_dot = str(number + 1) + '.'
             _, _, w, h = draw.textbbox((0, 0), number_dot, font=font)
             draw.text(((W - w) / 2, 187), number_dot, fill="#F9d9b8", font=font)
             draw.text(((W - w) / 2, 185), number_dot, fill="#fdbd76", font=font)
@@ -196,15 +208,9 @@ class InstagramService():
                 draw.text(((W - w) / 2, height), description_line, fill="black", font=font)
                 height += text_gap
 
-
-
-
-
             # Zapisz obraz jako plik JPEG
-            background.save(f"instagramservice/images/instagram_posts_facts/post-fact-title-{self.post_fact.id}-{number+1}.jpg")
-
-
-
+            background.save(
+                f"instagramservice/images/instagram_posts_facts/post-fact-title-{self.post_fact.id}-{number + 1}.jpg")
 
     def upload_post_fact(self):
 
@@ -228,7 +234,6 @@ class InstagramService():
         test = cl.album_upload(photo_list,
                                self.post_fact.fact.description + '\n' + self.post_fact.fact.hashtags)
         print('RESPONSE TEST: ', test)
-
 
     def create_story_image(self):
         # Wczytaj istniejący obrazek
@@ -268,8 +273,6 @@ class InstagramService():
         for flight in self.flights_queryset:
             print(flight)
 
-
-
             font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
                                       70)
             text = f"{flight.ticket.flight.arrival_city} - {flight.total_price} zł "
@@ -291,9 +294,6 @@ class InstagramService():
             draw.text((x, y), text, fill=text_color, font=font)
 
             current_position += 100
-
-
-
 
         # Zapisz obraz jako plik JPEG
         background.save(f"instagramservice/images/instagram_post_images/story-{self.story.id}.jpg")

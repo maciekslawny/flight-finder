@@ -68,8 +68,8 @@ class Command(BaseCommand):
 
 
         new_post = InstagramPostFact(
-            # fact=facts_filtered.first()
-            fact = Fact.objects.get(id=97)
+            fact=facts_filtered.first()
+            # fact = Fact.objects.get(id=97)
         )
         new_post.save()
 

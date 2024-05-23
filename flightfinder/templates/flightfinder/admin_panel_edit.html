@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+{% static "" as staticUrl %}
+{% block content %}
+
+
+    <main id="main" class="main">
+
+        <div class="pagetitle">
+            <h1>Admin Panel</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item active">Admin Panel</li>
+                </ol>
+            </nav>
+        </div><!-- End Page Title -->
+
+        <section class="section dashboard">
+            <div class="row">
+
+                <!-- Left side columns -->
+                <div class="col-lg-12">
+                    <div class="row">
+
+
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Horizontal Form</h5>
+
+              <!-- Horizontal Form -->
+              <form method="post">
+              {% csrf_token %}
+
+                <div class="row mb-3">
+                  <label for="inputEmail3" class="col-sm-2 col-form-label">Title</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" name="title" id="inputText" value="{{ fact.title }}">
+                  </div>
+                </div>
+                 <div class="row mb-3">
+                  <label for="inputEmail3" class="col-sm-2 col-form-label" >Description</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputText" name="description" value="{{ fact.description }}">
+                  </div>
+                </div>
+                <fieldset class="row mb-3">
+                  <legend class="col-form-label col-sm-2 pt-0">Images</legend>
+                  <div class="col-sm-10">
+                      {% for image_id in images_ids %}
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="image_id" id="image_id" value="{{ image_id }}" {% if fact.img_id|add:0 == image_id|add:0 %}checked{% endif %}>
+                      <label class="form-check-label" for="gridRadios1"> 
+                        <img src="{% static 'instagramservice/images/instagram_posts_facts/background/' %}{{ fact.category }}/{{ image_id }}.jpg" class="w-25 p-3">
+                      </label>
+                    </div>
+                      {% endfor %}
+
+                  </div>
+                </fieldset>
+
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                  <button type="reset" class="btn btn-secondary">Reset</button>
+                </div>
+              </form><!-- End Horizontal Form -->
+
+            </div>
+          </div>
+
+
+                    </div><!-- End sidebar recent posts-->
+
+                </div>
+            </div><!-- End News & Updates -->
+
+            </div><!-- End Right side columns -->
+
+            </div>
+        </section>
+
+    </main><!-- End #main -->
+{% endblock %}

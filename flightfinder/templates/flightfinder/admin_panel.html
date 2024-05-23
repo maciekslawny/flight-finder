@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% load static %}
+{% static "" as staticUrl %}
+{% block content %}
+
+
+    <main id="main" class="main">
+
+        <div class="pagetitle">
+            <h1>Admin Panel</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item active">Admin Panel</li>
+                </ol>
+            </nav>
+        </div><!-- End Page Title -->
+
+        <section class="section dashboard">
+            <div class="row">
+
+                <!-- Left side columns -->
+                <div class="col-lg-12">
+                    <div class="row">
+
+                        {#                    <!-- Sales Card -->#}
+                        {#                    <div class="col-xxl-4 col-md-6">#}
+                        {#                        <div class="card info-card sales-card">#}
+                        {##}
+                        {#                            <div class="filter">#}
+                        {#                                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>#}
+                        {#                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">#}
+                        {#                                    <li class="dropdown-header text-start">#}
+                        {#                                        <h6>Filter</h6>#}
+                        {#                                    </li>#}
+                        {##}
+                        {#                                    <li><a class="dropdown-item" href="#">Today</a></li>#}
+                        {#                                    <li><a class="dropdown-item" href="#">This Month</a></li>#}
+                        {#                                    <li><a class="dropdown-item" href="#">This Year</a></li>#}
+                        {#                                </ul>#}
+                        {#                            </div>#}
+                        {##}
+                        {#                            <div class="card-body">#}
+                        {#                                <h5 class="card-title">Trainings Amount <span>| Today</span></h5>#}
+                        {##}
+                        {#                                <div class="d-flex align-items-center">#}
+                        {#                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">#}
+                        {#                                        <i class="bi bi-cart"></i>#}
+                        {#                                    </div>#}
+                        {#                                    <div class="ps-3">#}
+                        {#                                        <h6>11</h6>#}
+                        {##}
+                        {#                                        <span class="text-success small pt-1 fw-bold">+ 5</span> <span#}
+                        {#                                            class="text-muted small pt-2 ps-1">monthly</span>#}
+                        {#                                        <a class="btn btn-primary" href="/update">Update</a>#}
+                        {##}
+                        {#                                    </div>#}
+                        {#                                </div>#}
+                        {#                            </div>#}
+                        {##}
+                        {#                        </div>#}
+                        {#                    </div><!-- End Sales Card -->#}
+                        {##}
+                        {#                    <!-- Revenue Card -->#}
+                        {#                    <div class="col-xxl-4 col-md-6">#}
+                        {#                        <div class="card info-card revenue-card">#}
+                        {##}
+                        {#                            <div class="filter">#}
+                        {#                                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>#}
+                        {#                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">#}
+                        {#                                    <li class="dropdown-header text-start">#}
+                        {#                                        <h6>Filter</h6>#}
+                        {#                                    </li>#}
+                        {##}
+                        {#                                    <li><a class="dropdown-item" href="#">Today</a></li>#}
+                        {#                                    <li><a class="dropdown-item" href="#">This Month</a></li>#}
+                        {#                                    <li><a class="dropdown-item" href="#">This Year</a></li>#}
+                        {#                                </ul>#}
+                        {#                            </div>#}
+                        {##}
+                        {#                            <div class="card-body">#}
+                        {#                                <h5 class="card-title">Body weight <span>| This Month</span></h5>#}
+                        {##}
+                        {#                                <div class="d-flex align-items-center">#}
+                        {#                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">#}
+                        {#                                        <i class="bi bi-currency-dollar"></i>#}
+                        {#                                    </div>#}
+                        {#                                    <div class="ps-3">#}
+                        {#                                        <h6>68 kg</h6>#}
+                        {#                                        <span class="text-success small pt-1 fw-bold">+ 0,5kg</span> <span#}
+                        {#                                            class="text-muted small pt-2 ps-1">monthly</span>#}
+                        {##}
+                        {#                                    </div>#}
+                        {#                                </div>#}
+                        {#                            </div>#}
+                        {##}
+                        {#                        </div>#}
+                        {#                    </div><!-- End Revenue Card -->#}
+                        {##}
+                        {#                    <!-- Customers Card -->#}
+                        {#                    <div class="col-xxl-4 col-xl-12">#}
+                        {##}
+                        {#                        <div class="card info-card customers-card">#}
+                        {##}
+                        {#                            <div class="filter">#}
+                        {#                                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>#}
+                        {#                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">#}
+                        {#                                    <li class="dropdown-header text-start">#}
+                        {#                                        <h6>Filter</h6>#}
+                        {#                                    </li>#}
+                        {##}
+                        {#                                    <li><a class="dropdown-item" href="#">Today</a></li>#}
+                        {#                                    <li><a class="dropdown-item" href="#">This Month</a></li>#}
+                        {#                                    <li><a class="dropdown-item" href="#">This Year</a></li>#}
+                        {#                                </ul>#}
+                        {#                            </div>#}
+                        {##}
+                        {#                            <div class="card-body">#}
+                        {#                                <h5 class="card-title">-<span> </span></h5>#}
+                        {##}
+                        {#                                <div class="d-flex align-items-center">#}
+                        {#                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">#}
+                        {#                                        <i class="bi bi-people"></i>#}
+                        {#                                    </div>#}
+                        {#                                    <div class="ps-3">#}
+                        {#                                        <h6>-</h6>#}
+                        {#                                        <span class="text-danger small pt-1 fw-bold"></span> <span#}
+                        {#                                            class="text-muted small pt-2 ps-1"></span>#}
+                        {##}
+                        {#                                    </div>#}
+                        {#                                </div>#}
+                        {##}
+                        {#                            </div>#}
+                        {#                        </div>#}
+                        {##}
+                        {#                    </div><!-- End Customers Card -->#}
+
+                        <!-- Top Selling -->
+                        <div class="col-12">
+                            <div class="card top-selling overflow-auto">
+
+                                <div class="filter">
+                                    <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                        <li class="dropdown-header text-start">
+                                            <h6>Filter</h6>
+                                        </li>
+
+                                        <li><a class="dropdown-item" href="#">Today</a></li>
+                                        <li><a class="dropdown-item" href="#">This Month</a></li>
+                                        <li><a class="dropdown-item" href="#">This Year</a></li>
+                                    </ul>
+                                </div>
+
+                                <div class="card-body pb-0">
+                                    <h5 class="card-title">Next Fact Posts <span>| Nadchodzące</span></h5>
+
+                                    <table class="table table-borderless">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Img</th>
+                                            <th scope="col">Title</th>
+                                            <th scope="col">Place</th>
+                                            <th scope="col">Category</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for fact in facts %}
+                                            <tr>
+                                                <th scope="row">
+                                                    <a href="/admin-panel/fact-posts/{{ fact.id }}"><img src="{% static fact.get_image_url %}"></a>
+
+
+                                                </th>
+                                                <td><a href="/admin-panel/fact-posts/{{ fact.id }}" class="text-primary fw-bold">{{ fact.title }}</a></td>
+                                                <td>{{ fact.place }}</td>
+                                                <td class="fw-bold">{{ fact.category }}</td>
+                                            </tr>
+
+                                        {% endfor %}
+
+                                        </tbody>
+                                    </table>
+
+                                </div>
+
+                            </div>
+                        </div><!-- End Top Selling -->
+
+
+                    </div><!-- End sidebar recent posts-->
+
+                </div>
+            </div><!-- End News & Updates -->
+
+            </div><!-- End Right side columns -->
+
+            </div>
+        </section>
+
+    </main><!-- End #main -->
+{% endblock %}

@@ -29,10 +29,35 @@ class Command(BaseCommand):
         finding_ticket_service = CheapestTicketPlanService()
         finder = TicketPlanFinder(ticket_plan_service=finding_ticket_service)
 
+        last_used_cities = []
+        published_posts = InstagramPost.objects.filter(is_published=True).order_by('-published_date')
+
+        if len(published_posts) >= 5:
+            amount = 5
+        elif len(published_posts) == 4:
+            amount = 4
+        elif len(published_posts) == 3:
+            amount = 3
+        elif len(published_posts) == 2:
+            amount = 2
+        elif len(published_posts) == 1:
+            amount = 1
+        else:
+            amount = 0
+
+        for x in range(amount):
+            item = published_posts.order_by('-published_date')[x]
+            print(item, item.arrival_city, last_used_cities)
+            last_used_cities.append(item.arrival_city)
+
+        print('last_used_cities', last_used_cities)
         tickets = []
-        for city_string in ['Neapol']:
+        all_cities = ['Alicante', 'Malaga', 'Neapol', 'Piza', 'Bergamo', 'Brindisi', 'Rzym', 'Barcelona', 'Zadar', 'Paryz']
+        selected_cities = [city for city in all_cities if city not in last_used_cities]
+        for city_string in selected_cities:
             tickets = tickets + finder.get_tickets_plan(from_search_date, to_search_date, 1, 6, 'Gdansk', city_string)
         tickets = sorted(tickets, key=lambda x: x.total_price)
+        print('selected_cities', selected_cities)
         selected_ticket = tickets[0]
 
         price = selected_ticket.total_price

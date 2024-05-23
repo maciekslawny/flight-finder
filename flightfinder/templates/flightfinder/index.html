@@ -169,17 +169,25 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {% for ticket in tickets %}
-                                        <tr>
-                                            <td>{{ ticket.ticket.flight.flight_date }} <br><b>{{ ticket.ticket.flight.get_weekday }}</b></td>
-                                            <td>{{ ticket.ticket.flight.departure_city.name }} - {{ ticket.ticket.flight.arrival_city.name }} <br>{{ ticket.ticket.price }} zł</td>
-                                            <td>{{ ticket.return_ticket.flight.flight_date }}<br><b>{{ ticket.return_ticket.flight.get_weekday }}</b></td>
-                                            <td>{{ ticket.return_ticket.flight.departure_city.name }} - {{ ticket.return_ticket.flight.arrival_city.name }} <br>{{ ticket.return_ticket.price }} zł</td>
-                                            <td>{{ ticket.duration }}</td>
-                                            <td>{{ ticket.total_price }} zł</td>
+                                        {% for ticket in tickets %}
+                                            <tr>
+                                                <td>{{ ticket.ticket.flight.flight_date }}
+                                                    <br><b>{{ ticket.ticket.flight.get_weekday }}</b></td>
+                                                <td>{{ ticket.ticket.flight.departure_city.name }}
+                                                    - {{ ticket.ticket.flight.arrival_city.name }}
+                                                    <br>{{ ticket.ticket.price }} zł
+                                                </td>
+                                                <td>{{ ticket.return_ticket.flight.flight_date }}<br><b>{{ ticket.return_ticket.flight.get_weekday }}</b>
+                                                </td>
+                                                <td>{{ ticket.return_ticket.flight.departure_city.name }}
+                                                    - {{ ticket.return_ticket.flight.arrival_city.name }}
+                                                    <br>{{ ticket.return_ticket.price }} zł
+                                                </td>
+                                                <td>{{ ticket.duration }} ({{ticket.weekend_days}})</td>
+                                                <td>{{ ticket.total_price }} zł</td>
 
-                                        </tr>
-                                    {% endfor %}
+                                            </tr>
+                                        {% endfor %}
 
 
 

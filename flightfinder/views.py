@@ -6,7 +6,7 @@ import subprocess
 
 from flightfinder.services import CheapestTicketPlanService, TicketPlanFinder, ImportFlightsData
 from flightfinder.ultis import get_sidebar_destinations
-
+from instagramservice.models import InstagramPost, InstagramPostFact, Fact
 
 # Create your views here.
 
@@ -32,6 +32,89 @@ def home(request):
     }
 
     return render(request, 'flightfinder/index.html', context)
+
+
+def fact_posts(request):
+    from_search_date = datetime.now().date()
+    to_search_date = datetime.now().date() + timedelta(days=100)
+    print(from_search_date, to_search_date)
+
+    facts = [obj for obj in Fact.objects.all() if obj.is_used == False]
+
+    published_posts_1 = InstagramPostFact.objects.filter(is_published=True).order_by('-published_date')[0]
+    published_posts_2 = InstagramPostFact.objects.filter(is_published=True).order_by('-published_date')[1]
+    print('PUBLISHED FIRST:', published_posts_1.fact.title, 'second:', published_posts_2.fact.title)
+
+    published_posts = InstagramPostFact.objects.filter(is_published=True).order_by('-published_date')
+
+    if len(published_posts) >= 3:
+        amount = 3
+    elif len(published_posts) == 2:
+        amount = 2
+    elif len(published_posts) == 1:
+        amount = 1
+    else:
+        amount = 0
+
+    facts_not_used = [obj.id for obj in Fact.objects.all() if obj.is_used == False]
+    facts = Fact.objects.filter(id__in=facts_not_used)
+
+    print('FAKTY:', facts)
+    print('AMOUNT:', amount)
+    excluded_places = []
+    for x in range(amount):
+        last_post_place = published_posts[x].fact.place
+        print('LAST PLACE:', last_post_place)
+        if facts.exclude(place__in=excluded_places).exclude(place=last_post_place):
+            excluded_places.append(last_post_place)
+            print('DODANE DO EXCLUDED:', last_post_place)
+        else:
+            break
+    facts_filtered = facts.exclude(place__in=excluded_places)
+
+    context = {
+        'facts': facts_filtered,
+        'sidebar_destinations': get_sidebar_destinations()
+    }
+
+    return render(request, 'flightfinder/admin_panel.html', context)
+
+
+
+def fact_posts_detail(request, pk):
+
+
+    context = {
+        'fact': Fact.objects.get(pk=pk),
+        'sidebar_destinations': get_sidebar_destinations()
+    }
+
+    return render(request, 'flightfinder/admin_panel_detail.html', context)
+
+
+def fact_posts_edit(request, pk):
+    fact = Fact.objects.get(pk=pk)
+    files = os.listdir(f"instagramservice/images/instagram_posts_facts/background/{fact.category}/")
+    images_ids = [int(x+1) for x in range(len(files))]
+    print('images_ids', images_ids)
+
+    if request.method == 'POST':
+        new_image_id = request.POST.get('image_id')
+        new_title = request.POST.get('title')
+        new_description = request.POST.get('description')
+        fact.title = new_title
+        fact.description = new_description
+        fact.img_id = new_image_id
+        fact.save()
+        print('new_image_id', new_image_id)
+
+    context = {
+        'images_ids': images_ids,
+        'fact': fact,
+        'sidebar_destinations': get_sidebar_destinations()
+    }
+
+    return render(request, 'flightfinder/admin_panel_edit.html', context)
 
 
 def destination_view(request, departure_city, arrival_city):

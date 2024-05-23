@@ -1,3 +1,5 @@
+import os
+import random
 from datetime import datetime, timedelta
 
 from django.core.management.base import BaseCommand, CommandError
@@ -33,8 +35,13 @@ class Command(BaseCommand):
             if Fact.objects.filter(title=city_fact['title'].upper()):
                 print('Fakt juz istnial - ', city_fact['title'])
                 continue
+            files = os.listdir(
+                f"instagramservice/images/instagram_posts_facts/background/{city_fact.category}/")
+            file_count = len(files)
+            img_id = random.randint(1, file_count)
             new_fact = Fact(
                 description = city_fact['description'],
+                img_id = img_id,
                 title = city_fact['title'].upper(),
                 place = city_fact['place'].lower(),
                 category = city_fact['category'].lower(),
