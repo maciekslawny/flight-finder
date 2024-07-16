@@ -12,6 +12,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      THE_SECRET_KEY: your_secret_key_value
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
