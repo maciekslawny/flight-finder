@@ -103,6 +103,7 @@ class Fact(models.Model):
     title_5 = models.CharField(max_length=50, null=True, blank=True)
     description_5 = models.TextField(null=True, blank=True)
     img_id = models.IntegerField(default=1)
+    priority = models.IntegerField(null=True, blank=True, default=None)
 
     @property
     def is_used(self):
@@ -162,23 +163,32 @@ class InstagramStory(models.Model):
 
     def generate_image(self):
         from_search_date = datetime.now().date()
-        to_search_date = datetime.now().date() + timedelta(days=25)
+        to_search_date = datetime.now().date() + timedelta(days=120)
         print(from_search_date, to_search_date)
 
         finding_ticket_service = CheapestTicketPlanService()
         finder = TicketPlanFinder(ticket_plan_service=finding_ticket_service)
 
         tickets = []
-        for city_string in ['Alicante', 'Malaga', 'Neapol']:
-            tickets = tickets + finder.get_tickets_plan(from_search_date, to_search_date, 1, 6, 'Gdansk', city_string)
+        for city_string in ['Alicante', 'Malaga', 'Neapol', 'Paryz', 'Rzym']:
+            tickets = tickets + finder.get_tickets_plan(from_search_date, to_search_date, 2, 7, 'Gdansk', city_string)
         tickets = sorted(tickets, key=lambda x: x.total_price)
 
 
         service = InstagramService()
         service.story = self
-        service.flights_queryset = tickets[:5]
+        service.flights_queryset = tickets
         service.create_story_image()
         self.is_image_generated = True
         self.save()
         print('Story image generated')
 
+
+class InstagramProfile(models.Model):
+    username = models.CharField(max_length=50)
+    is_following_me = models.BooleanField(default=False)
+    commented = models.BooleanField(default=False)
+    liked = models.BooleanField(default=False)
+    followed = models.BooleanField(default=False)
+    following_amount = models.IntegerField(default=0)
+    followers_amount = models.IntegerField(default=0)

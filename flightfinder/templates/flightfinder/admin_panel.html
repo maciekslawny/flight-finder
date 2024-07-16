@@ -162,6 +162,8 @@
                                             <th scope="col">Title</th>
                                             <th scope="col">Place</th>
                                             <th scope="col">Category</th>
+                                            <th scope="col">Priority</th>
+                                            <th scope="col">#</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -175,6 +177,8 @@
                                                 <td><a href="/admin-panel/fact-posts/{{ fact.id }}" class="text-primary fw-bold">{{ fact.title }}</a></td>
                                                 <td>{{ fact.place }}</td>
                                                 <td class="fw-bold">{{ fact.category }}</td>
+                                                <td class="fw-bold">{{ fact.priority }}</td>
+                                                <td class="fw-bold"><a class="btn btn-primary btn-sm">Publish</a></td>
                                             </tr>
 
                                         {% endfor %}

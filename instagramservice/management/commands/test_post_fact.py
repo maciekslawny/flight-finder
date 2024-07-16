@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from django.core.management.base import BaseCommand, CommandError
 
 from flightfinder.services import CheapestTicketPlanService, TicketPlanFinder
+from instagramservice.filtering import get_facts_queryset
 from instagramservice.models import InstagramPost, InstagramPostFact, Fact
 from instagramservice.cities_services import AlicanteService
 from instagramservice.facts import alicante_facts, malaga_facts
@@ -68,12 +69,12 @@ class Command(BaseCommand):
 
 
         new_post = InstagramPostFact(
-            fact=facts_filtered.first()
+            fact=get_facts_queryset()[0]
             # fact = Fact.objects.get(id=97)
         )
         new_post.save()
 
         new_post.generate_image()
-        new_post.publish()
+        # new_post.publish()
 
 

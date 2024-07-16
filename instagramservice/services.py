@@ -237,7 +237,7 @@ class InstagramService():
 
     def create_story_image(self):
         # Wczytaj istniejący obrazek
-        background = Image.open(f"instagramservice/images/story-tlo.jpg")
+        background = Image.open(f"instagramservice/images/tlo-story.jpg")
 
         # Ustaw czcionkę i tekst
         font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
@@ -245,55 +245,87 @@ class InstagramService():
         draw = ImageDraw.Draw(background)
 
         # Tekst
-        text = "LOTY NA MAJ"
-        text_color = "black"
+        text = "PROPOZYCJE  LOTÓW"
+        text_color = "white"
         background_color = "white"
 
-        # Pozycja tekstu
-        text_width = draw.textlength(text, font=font)
-        x = 120
-        y = 140
 
-        # Narysuj tło dla tekstu
-        draw.rounded_rectangle([x - 20, y, x + text_width + 20, y + 130], radius=50, fill=background_color)
 
-        # Narysuj tekst na tle
-        draw.text((x, y), text, fill=text_color, font=font)
 
-        font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
-                                  90)
-        text = "Wyloty z Gdańska:"
-        text_width = draw.textlength(text, font=font)
-        x = 90
-        y = 500
-        text_width = draw.textlength(text, font=font)
-        draw.text((x, y), text, fill=text_color, font=font)
+        current_position = 365
 
-        current_position = 630
+        used_cities = []
         for flight in self.flights_queryset:
-            print(flight)
+
+            if flight.ticket.flight.arrival_city in used_cities:
+                continue
+            used_cities.append(flight.ticket.flight.arrival_city)
+
+            text = f"{flight.ticket.flight.departure_city} - {flight.ticket.flight.arrival_city}"
+            if len(text) > 17:
+                size = 59
+            else:
+                size = 64
+
+            image = 610
 
             font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
-                                      70)
-            text = f"{flight.ticket.flight.arrival_city} - {flight.total_price} zł "
+                                      size)
+
             text_width = draw.textlength(text, font=font)
-            x = 90
+            print('text_width', text_width)
+            x = 30
             y = current_position
+            draw.text((image - text_width, y), text, fill=text_color, font=font)
+
+
+            text_price = f'{flight.total_price} PLN'
+            font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
+                                      85)
+
+            text_width = draw.textlength(text_price, font=font)
+            print('text_width', text_width)
+            x = 30
+            y = current_position
+            draw.text((image - text_width + 455, y), text_price, fill=text_color, font=font)
+
+
+            text = 'w 2 strony!'
+            font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Regular.ttf",
+                                      51)
+
             text_width = draw.textlength(text, font=font)
-            draw.text((x, y), text, fill=text_color, font=font)
+            print('text_width', text_width)
+            x = 30
+            y = current_position
+            draw.text((image - text_width + 455, y+90), text, fill=text_color, font=font)
+
+
+
 
             current_position += 70
 
-            font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
-                                      60)
-            text = f"Wylot: {str(flight.ticket.flight.flight_date)[5:10]}  -  Powrót: {str(flight.return_ticket.flight.flight_date)[5:10]}"
+            font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Regular.ttf",
+                                      55)
+            text = f"Wylot: {str(flight.ticket.flight.flight_date)[8:10]}.{str(flight.ticket.flight.flight_date)[5:7]}"
             text_width = draw.textlength(text, font=font)
-            x = 90
+            x = 30
             y = current_position
             text_width = draw.textlength(text, font=font)
-            draw.text((x, y), text, fill=text_color, font=font)
+            draw.text((image - text_width, y), text, fill=text_color, font=font)
 
-            current_position += 100
+            current_position += 70
+
+            font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Regular.ttf",
+                                      55)
+            text = f"Powrót: {str(flight.return_ticket.flight.flight_date)[8:10]}.{str(flight.return_ticket.flight.flight_date)[5:7]}"
+            text_width = draw.textlength(text, font=font)
+            x = 30
+            y = current_position
+            text_width = draw.textlength(text, font=font)
+            draw.text((image - text_width, y), text, fill=text_color, font=font)
+
+            current_position += 145
 
         # Zapisz obraz jako plik JPEG
         background.save(f"instagramservice/images/instagram_post_images/story-{self.story.id}.jpg")

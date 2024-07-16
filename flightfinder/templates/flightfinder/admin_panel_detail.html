@@ -17,6 +17,8 @@
         </div><!-- End Page Title -->
 
         <section class="section dashboard">
+            <a class="btn btn-primary" href="/admin-panel/fact-posts">Back</a>
+            <a class="btn btn-primary" href="/admin-panel/fact-posts/{{ fact.id }}/edit">Edit</a>
             <div class="row">
 
                 <!-- Left side columns -->
@@ -25,6 +27,7 @@
 
 
                         <!-- Card with an image on top -->
+
                         <div class="card">
                             <span class="w-25 p-3">
                                 <img src="{% static fact.get_image_url %}" class="card-img-top" alt="...">

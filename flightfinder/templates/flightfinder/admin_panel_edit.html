@@ -24,50 +24,62 @@
                     <div class="row">
 
 
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Horizontal Form</h5>
 
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Horizontal Form</h5>
+                                <!-- Horizontal Form -->
+                                <form method="post">
+                                    {% csrf_token %}
 
-              <!-- Horizontal Form -->
-              <form method="post">
-              {% csrf_token %}
+                                    <div class="row mb-3">
+                                        <label for="inputEmail3" class="col-sm-2 col-form-label">Title</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" name="title" id="inputText"
+                                                   value="{{ fact.title }}">
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <label for="inputEmail3" class="col-sm-2 col-form-label">Description</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputText" name="description"
+                                                   value="{{ fact.description }}">
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <label for="inputEmail3" class="col-sm-2 col-form-label">Priority</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputText" name="priority"
+                                                   value="{{ fact.priority }}">
+                                        </div>
+                                    </div>
+                                    <fieldset class="row mb-3">
+                                        <legend class="col-form-label col-sm-2 pt-0">Images</legend>
+                                        <div class="col-sm-10">
+                                            {% for image_id in images_ids %}
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="image_id"
+                                                           id="image_id" value="{{ image_id }}"
+                                                           {% if fact.img_id|add:0 == image_id|add:0 %}checked{% endif %}>
+                                                    <label class="form-check-label" for="gridRadios1">
+                                                        <img src="
+                                                                {% static 'instagramservice/images/instagram_posts_facts/background/' %}{{ fact.category }}/{{ image_id }}.jpg"
+                                                             class="w-25 p-3">
+                                                    </label>
+                                                </div>
+                                            {% endfor %}
 
-                <div class="row mb-3">
-                  <label for="inputEmail3" class="col-sm-2 col-form-label">Title</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control" name="title" id="inputText" value="{{ fact.title }}">
-                  </div>
-                </div>
-                 <div class="row mb-3">
-                  <label for="inputEmail3" class="col-sm-2 col-form-label" >Description</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control" id="inputText" name="description" value="{{ fact.description }}">
-                  </div>
-                </div>
-                <fieldset class="row mb-3">
-                  <legend class="col-form-label col-sm-2 pt-0">Images</legend>
-                  <div class="col-sm-10">
-                      {% for image_id in images_ids %}
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="image_id" id="image_id" value="{{ image_id }}" {% if fact.img_id|add:0 == image_id|add:0 %}checked{% endif %}>
-                      <label class="form-check-label" for="gridRadios1">
-                        <img src="{% static 'instagramservice/images/instagram_posts_facts/background/' %}{{ fact.category }}/{{ image_id }}.jpg" class="w-25 p-3">
-                      </label>
-                    </div>
-                      {% endfor %}
+                                        </div>
+                                    </fieldset>
 
-                  </div>
-                </fieldset>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <button type="reset" class="btn btn-secondary">Reset</button>
+                                    </div>
+                                </form><!-- End Horizontal Form -->
 
-                <div class="text-center">
-                  <button type="submit" class="btn btn-primary">Submit</button>
-                  <button type="reset" class="btn btn-secondary">Reset</button>
-                </div>
-              </form><!-- End Horizontal Form -->
-
-            </div>
-          </div>
+                            </div>
+                        </div>
 
 
                     </div><!-- End sidebar recent posts-->

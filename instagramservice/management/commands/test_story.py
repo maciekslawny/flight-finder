@@ -17,30 +17,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        # #Publikuj
-        # post = InstagramPost.objects.get(id=1)
-        # post.generate_image()
-        # post.publish()
-
-        from_search_date = datetime.now().date()
-        to_search_date = datetime.now().date() + timedelta(days=100)
-        print(from_search_date, to_search_date)
-
-        finding_ticket_service = CheapestTicketPlanService()
-        finder = TicketPlanFinder(ticket_plan_service=finding_ticket_service)
-
-        tickets = []
-        for city_string in ['Alicante']:
-            tickets = tickets + finder.get_tickets_plan(from_search_date, to_search_date, 1, 6, 'Gdansk', city_string)
-        tickets = sorted(tickets, key=lambda x: x.total_price)
-        selected_ticket = tickets[0]
-
-        price = selected_ticket.total_price
-        departure_city = str(selected_ticket.ticket.flight.departure_city)
-        arrival_city = str(selected_ticket.ticket.flight.arrival_city)
-        flight_date = str(selected_ticket.ticket.flight.flight_date)
-        flight_return_date = str(selected_ticket.return_ticket.flight.flight_date)
-
         new_post = InstagramStory(description = '')
         new_post.save()
 
