@@ -5,6 +5,7 @@ import random
 from instagrapi.types import StoryMention, StoryMedia, StoryLink, StoryHashtag
 from instagramservice.facts import alicante_facts, malaga_facts
 import os
+from flightfinder.models import City
 
 
 class InstagramService():
@@ -37,19 +38,87 @@ class InstagramService():
         if self.post.arrival_city == 'Zadar':
             background_image = 'zadar-tlo.jpg'
         # Wczytaj istniejący obrazek
-        background = Image.open(f"instagramservice/images/instagram_post_images/cities-bg/{background_image}")
+        background = Image.open(f"instagramservice/images/instagram_post_new/{str(self.post.arrival_city).lower()}-tlo-1.jpg")
 
         # Ustaw czcionkę i tekst
         font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
-                                  210)  # Wybierz czcionkę i rozmiar
+                                  130)  # Wybierz czcionkę i rozmiar
         draw = ImageDraw.Draw(background)
 
         # Uzyskaj granice obszaru zawierającego tekst
 
-        text_price = draw.textbbox((0, -200), str(self.post.price) + ' PLN', font=font)
-        text_price_position = ((background.width - text_price[2]) // 2, (background.height - text_price[3]) // 2)
 
-        draw.text(text_price_position, str(self.post.price) + ' PLN', fill="white", font=font)
+        price = f'{self.post.price}'
+        _, _, text_width, h = draw.textbbox((0, 0), price, font=font)
+
+
+
+
+        price_end_position = 895
+
+        if text_width > 240:
+            price_end_position = 915
+
+        text_price_position = (price_end_position - text_width, -3)
+
+        draw.text(text_price_position, str(price), fill="white", font=font)
+
+
+
+
+
+        font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
+                                  70)  # Wybierz czcionkę i rozmiar
+        text_price_position = (925, 52)
+        draw.text(text_price_position, str('PLN'), fill="white", font=font)
+
+
+
+        font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
+                                  60)  # Wybierz czcionkę i rozmiar
+
+
+        departure_city_instance = City.objects.get(name=self.post.departure_city)
+        if departure_city_instance.genitive:
+            text = f'z {departure_city_instance.genitive}'
+        else:
+            text = f'z {departure_city_instance.name}'
+
+
+
+        _, _, text_width, h = draw.textbbox((0, 0), text, font=font)
+
+
+        print('width', text_width)
+
+        text_size = 60
+        if text_width > 390:
+            text_size = 45
+
+        font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
+                                  text_size)
+        _, _, text_width, h = draw.textbbox((0, 0), text, font=font)
+        text_price_position = (1060 - text_width, 140)
+        draw.text(text_price_position, str(text), fill="white", font=font)
+
+
+
+
+        font = ImageFont.truetype("flightfinder/management/commands/fonts/Rubik-Bold.ttf",
+                                  70)
+
+        date_text = f'{str(self.post.flight_date)[8:10]}.{str(self.post.flight_date)[5:7]} - {str(self.post.flight_return_date)[8:10]}.{str(self.post.flight_return_date)[5:7]}'
+
+        _, _, text_width, h = draw.textbbox((0, 0), date_text, font=font)
+
+        print('width', text_width)
+
+
+        text_price_position = (315 - (text_width/2), 911)
+        draw.text(text_price_position, str(date_text), fill="white", font=font)
+
+
+
 
         # Zapisz obraz jako plik JPEG
         background.save(f"instagramservice/images/instagram_post_images/post-{self.post.id}.jpg")

@@ -16,6 +16,10 @@ app.conf.beat_schedule = {
         'task': 'flightfinder.tasks.import_tickets',  # Zmiana na ścieżkę Twojego zadania
         'schedule': 1800.0  # Ustawienie interwału czasowego, np. 30 sekund
     },
+    'upload-post-60-minutes': {
+        'task': 'flightfinder.tasks.upload_post',  # Zmiana na ścieżkę Twojego zadania
+        'schedule': 3600.0  # Ustawienie interwału czasowego, np. 30 sekund
+    },
 }
 
 app.autodiscover_tasks()

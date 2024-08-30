@@ -81,6 +81,8 @@ class InstagramPost(models.Model):
         except:
             print('Error publishing')
 
+
+
     def __str__(self):
         return f'{self.departure_city} - {self.arrival_city} - {self.price} - {self.created_at}'
 

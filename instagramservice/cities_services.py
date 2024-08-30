@@ -396,37 +396,36 @@ class PisaService:
 
 class ZadarService:
     def __init__(self):
-        def __init__(self):
-            self.descriptions = [
-                "Zadar to perła Adriatyku, gdzie historia spotyka się z pięknymi plażami! 🌊🏖️ Odkryj starożytne ruiny, rzymskie forum i unikalne instalacje, takie jak Morskie Organy i Powitanie Słońca.",
-                "Zanurz się w atmosferze Zadar, miasta pełnego śródziemnomorskiego uroku! 🌅🚤 Spaceruj po malowniczych nabrzeżach, podziwiaj zachody słońca, które Alfred Hitchcock uważał za najpiękniejsze na świecie.",
-                "Zadar to raj dla miłośników kuchni dalmatyńskiej! 🍽️🍷 Delektuj się lokalnymi specjałami, takimi jak peka, pašticada i wyborne wina. Każdy posiłek w Zadar to prawdziwa uczta.",
-                "Odkryj romantyczną stronę Zadar, gdzie każda chwila jest pełna magii! 💑 Spaceruj po promenadzie Riva, podziwiaj widoki na morze i delektuj się romantyczną kolacją przy świecach w jednej z uroczych restauracji.",
-                "Czy marzysz o przygodzie pełnej słońca, morza i kultury? Zadar to idealne miejsce! ☀️🏞️🎨 Zwiedzaj imponujące zabytki, relaksuj się na pięknych plażach i ciesz się autentyczną atmosferą tego nadmorskiego miasta.",
-                "Zadar to więcej niż tylko miasto - to wyjątkowe doświadczenie! 🌟🌊🎉 Poczuj niezwykłą energię Zadar, biorąc udział w lokalnych festiwalach, koncertach i wydarzeniach kulturalnych. Niech Zadar stanie się Twoim ulubionym miejscem na niezapomniane wakacje."
-            ]
-            self.hashtags = [
-                "#Zadar",
-                "#Dalmatia",
-                "#Croatia",
-                "#VisitZadar",
-                "#TravelCroatia",
-                "#CroatiaFullOfLife",
-                "#ZadarCity",
-                "#ZadarLife",
-                "#ZadarViews",
-                "#ZadarHistory",
-                "#ZadarFood",
-                "#ZadarCulture",
-                "#ZadarTrip",
-                "#ZadarHoliday",
-                "#ZadarExplore",
-                "#ZadarTourism",
-                "#ZadarAttractions",
-                "#ZadarExperience",
-                "#AdriaticSea",
-                "#ZadarSunset"
-            ]
+        self.descriptions = [
+            "Zadar to perła Adriatyku, gdzie historia spotyka się z pięknymi plażami! 🌊🏖️ Odkryj starożytne ruiny, rzymskie forum i unikalne instalacje, takie jak Morskie Organy i Powitanie Słońca.",
+            "Zanurz się w atmosferze Zadar, miasta pełnego śródziemnomorskiego uroku! 🌅🚤 Spaceruj po malowniczych nabrzeżach, podziwiaj zachody słońca, które Alfred Hitchcock uważał za najpiękniejsze na świecie.",
+            "Zadar to raj dla miłośników kuchni dalmatyńskiej! 🍽️🍷 Delektuj się lokalnymi specjałami, takimi jak peka, pašticada i wyborne wina. Każdy posiłek w Zadar to prawdziwa uczta.",
+            "Odkryj romantyczną stronę Zadar, gdzie każda chwila jest pełna magii! 💑 Spaceruj po promenadzie Riva, podziwiaj widoki na morze i delektuj się romantyczną kolacją przy świecach w jednej z uroczych restauracji.",
+            "Czy marzysz o przygodzie pełnej słońca, morza i kultury? Zadar to idealne miejsce! ☀️🏞️🎨 Zwiedzaj imponujące zabytki, relaksuj się na pięknych plażach i ciesz się autentyczną atmosferą tego nadmorskiego miasta.",
+            "Zadar to więcej niż tylko miasto - to wyjątkowe doświadczenie! 🌟🌊🎉 Poczuj niezwykłą energię Zadar, biorąc udział w lokalnych festiwalach, koncertach i wydarzeniach kulturalnych. Niech Zadar stanie się Twoim ulubionym miejscem na niezapomniane wakacje."
+        ]
+        self.hashtags = [
+            "#Zadar",
+            "#Dalmatia",
+            "#Croatia",
+            "#VisitZadar",
+            "#TravelCroatia",
+            "#CroatiaFullOfLife",
+            "#ZadarCity",
+            "#ZadarLife",
+            "#ZadarViews",
+            "#ZadarHistory",
+            "#ZadarFood",
+            "#ZadarCulture",
+            "#ZadarTrip",
+            "#ZadarHoliday",
+            "#ZadarExplore",
+            "#ZadarTourism",
+            "#ZadarAttractions",
+            "#ZadarExperience",
+            "#AdriaticSea",
+            "#ZadarSunset"
+        ]
 
     def get_random_description(self):
         return random.choice(self.descriptions)

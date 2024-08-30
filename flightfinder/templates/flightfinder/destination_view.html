@@ -240,7 +240,12 @@
                                         <tbody>
                                         {% for ticket in tickets %}
                                             <tr>
-                                                <td>{{ ticket.ticket.flight.flight_date }}
+                                                <td>{% if ticket.ticket.get_specific_ticket.departure_data_time %}
+                                                        <a href="{{ ticket.ticket.get_specific_ticket.purchase_link }}">{{ ticket.ticket.get_specific_ticket.departure_data_time }}</a>
+
+                                                    {% else %}
+                                                        {{ ticket.ticket.flight.flight_date }}
+                                                    {% endif %}
                                                     <br><b>{{ ticket.ticket.flight.get_weekday }}</b></td>
                                                 <td>{{ ticket.ticket.flight.departure_city.name }}
                                                     - {{ ticket.ticket.flight.arrival_city.name }}

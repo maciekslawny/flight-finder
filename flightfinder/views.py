@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
-from flightfinder.models import Flight, FlightPrice, City, FlightSearch, SidebarDestination
+from flightfinder.models import Flight, FlightPrice, City, FlightSearch, SidebarDestination, SpecificFlight
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 import subprocess
 
 from flightfinder.services import CheapestTicketPlanService, TicketPlanFinder, ImportFlightsData
 from flightfinder.ultis import get_sidebar_destinations
+from flightfinder.models import TicketPlanDisplay, TicketPlanSearchDisplay
 from instagramservice.filtering import get_facts_queryset
 from instagramservice.models import InstagramPost, InstagramPostFact, Fact
 
@@ -17,16 +18,54 @@ def home(request):
     to_search_date = datetime.now().date() + timedelta(days=100)
     print(from_search_date, to_search_date)
 
-    finding_ticket_service = CheapestTicketPlanService()
-    finder = TicketPlanFinder(ticket_plan_service=finding_ticket_service)
 
-    tickets = []
-    for city_string in ['Alicante', 'Malaga', 'Neapol', 'Piza', 'Bergamo', 'Brindisi', 'Rzym', 'Barcelona', 'Zadar', 'Paryz']:
-        tickets = tickets + finder.get_tickets_plan(from_search_date, to_search_date, 1, 6, 'Gdansk', city_string)
-    tickets = sorted(tickets, key=lambda x: x.total_price)
+    departure_city = City.objects.get(name="Gdansk")
+    searches = []
+
+    for arrival_city in ['Alicante', 'Malaga', 'Neapol', 'Piza', 'Bergamo', 'Brindisi', 'Rzym', 'Barcelona', 'Zadar', 'Paryz']:
+        searches.append(TicketPlanSearchDisplay.objects.filter(departure_city=departure_city, arrival_city=City.objects.get(name=arrival_city)).order_by('created_at').first())
+
+        print('SEARCH', TicketPlanSearchDisplay.objects.filter(departure_city=departure_city, arrival_city=City.objects.get(name=arrival_city)).order_by('-created_at').first().created_at)
+
+    ticket_plan_display = TicketPlanDisplay.objects.filter(search__in=searches).order_by(
+            'total_price')
+
+    posts = InstagramPost.objects.all().order_by('-published_date')[:8]
 
     context = {
-        'tickets': tickets,
+        'posts': posts,
+        'cities': City.objects.all(),
+        'updates': FlightSearch.objects.all().order_by('-search_date')[:10],
+        'sidebar_destinations': get_sidebar_destinations()
+    }
+
+    return render(request, 'flightfinder/index.html', context)
+
+
+def panel(request):
+    from_search_date = datetime.now().date()
+    to_search_date = datetime.now().date() + timedelta(days=100)
+    print(from_search_date, to_search_date)
+
+    departure_city = City.objects.get(name="Gdansk")
+    searches = []
+
+    for arrival_city in ['Alicante', 'Malaga', 'Neapol', 'Piza', 'Bergamo', 'Brindisi', 'Rzym', 'Barcelona', 'Zadar',
+                         'Paryz']:
+        searches.append(TicketPlanSearchDisplay.objects.filter(departure_city=departure_city,
+                                                               arrival_city=City.objects.get(
+                                                                   name=arrival_city)).order_by('created_at').first())
+
+        print('SEARCH', TicketPlanSearchDisplay.objects.filter(departure_city=departure_city,
+                                                               arrival_city=City.objects.get(
+                                                                   name=arrival_city)).order_by(
+            '-created_at').first().created_at)
+
+    ticket_plan_display = TicketPlanDisplay.objects.filter(search__in=searches).order_by(
+        'total_price')
+
+    context = {
+        'tickets': ticket_plan_display,
         'cities': City.objects.all(),
         'updates': FlightSearch.objects.all().order_by('-search_date')[:10],
         'sidebar_destinations': get_sidebar_destinations()
@@ -141,8 +180,9 @@ def update(request, departure_city, arrival_city):
     # os.system("docker-compose restart")
     # subprocess.run(['docker-compose', 'docker-compose', 'restart'], shell=True, check=True)
     # print("Kontenery Docker zostały zresetowane pomyślnie.")
-    # update = ImportFlightsData()
-    # update.import_flights(departure_city, arrival_city)
-    import_tickets.delay(departure_city, arrival_city)
+    update = ImportFlightsData()
+    update.setup_chrome_driver()
+    update.import_flights(departure_city, arrival_city)
+    # import_tickets.delay(departure_city, arrival_city)
 
     return redirect(f'/destination/{departure_city}/{arrival_city}')

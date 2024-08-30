@@ -1,13 +1,17 @@
 from dataclasses import dataclass
 from datetime import timedelta
+from math import expm1
+from sys import flags
 from typing import Protocol
-from flightfinder.models import FlightPrice, City, FlightSearch, Flight
+
+from flightfinder.models import FlightPrice, City, FlightSearch, Flight, TicketPlanSearchDisplay, TicketPlanDisplay, SpecificFlight
 import time
 from selenium.webdriver.common.by import By
 from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import logging
+from selenium.webdriver.common.keys import Keys
 
 from flightfinder.ultis import get_weekend_days_amount
 
@@ -32,7 +36,9 @@ class CheapestTicketPlanService(TicketPlanService):
 
     def get_tickets_plan(self, start_date, end_date, min_duration, max_duration, departure_city: str, arrival_city: str):
         flights = []
-
+        print('________ TERAZ SIE DZIEJE !!!!! ____________', departure_city, arrival_city)
+        ticket_plan_search = TicketPlanSearchDisplay(departure_city = City.objects.get(name=departure_city), arrival_city= City.objects.get(name=arrival_city))
+        ticket_plan_search.save()
         flight_search = FlightSearch.objects.filter(departure_city=City.objects.get(name=departure_city),
                                                     arrival_city=City.objects.get(name=arrival_city)).order_by(
             '-search_date').first()
@@ -56,6 +62,8 @@ class CheapestTicketPlanService(TicketPlanService):
                 total_price = flight_price.price + return_flight_price.price
                 weekend_days = get_weekend_days_amount(flight_price.flight.flight_date, return_flight_price.flight.flight_date)
                 ticket_result = TicketPlan(flight_price, return_flight_price, duration.days, total_price, weekend_days)
+                ticket_plan_display = TicketPlanDisplay(search=ticket_plan_search, ticket=flight_price, return_ticket=return_flight_price, duration=duration.days, total_price=total_price, weekend_days=weekend_days)
+                ticket_plan_display.save()
                 flights.append(ticket_result)
 
         sorted_flights = sorted(flights, key=lambda x: x.total_price)
@@ -180,7 +188,11 @@ class ImportFlightsData():
 
     def accept_cookies(self):
         print('accept_cookies')
-        button_accept = self.driver.find_elements(By.XPATH, "//button")[1]
+        # button_accept = self.driver.find_elements(By.XPATH, "//button")[1]   jsname="V67aGc"
+        button_accept = self.driver.find_element(By.XPATH, "//*[text()='Zaakceptuj wszystko']")
+
+
+
         button_accept.click()
         time.sleep(2)
 
@@ -190,6 +202,9 @@ class ImportFlightsData():
             self.driver.find_element(By.XPATH, './/*[@aria-label="Skąd lecisz?"]').get_attribute("value"))
         self.city_arrival_name = self.replace_special_chars(
             self.driver.find_element(By.XPATH, './/*[@aria-label="Dokąd?"]').get_attribute("value"))
+
+
+
 
     def create_cities(self):
         try:
@@ -276,4 +291,203 @@ class ImportFlightsData():
             self.scan_all_months()
 
 
+
+    def follow_months_price_table_max_left(self):
+        time.sleep(2)
+        previous_btn = self.driver.find_elements(By.XPATH, "//*[@ssk='6:yVlIde']")[0]
+        next_btn = self.driver.find_elements(By.XPATH, "//*[@jsname='KpyLEe']")[0]
+        for _ in range(10):
+            try:
+                previous_btn.click()
+            except:
+                print('nie udalo sie kliknac wstecz')
+                break
+            time.sleep(2)
+
+
+
+
+    def click_next_date(self, actual_date, calendar_dates, next_page=False):
+        is_found = False
+
+
+
+        for calendar_date_element in calendar_dates:
+            item_price = calendar_date_element.find_element(By.XPATH, './/*[@jsname="qCDwBb"]')
+            item_price_date = datetime.strptime(calendar_date_element.get_attribute("data-iso"), "%Y-%m-%d").date()
+
+
+            if item_price.text and item_price_date > actual_date:
+                div_element = self.driver.find_element(By.XPATH, f"//*[@data-iso='{item_price_date}']")
+                div_element.click()
+                time.sleep(1)
+                button_accept = self.driver.find_element(By.XPATH, "//*[@class='VfPpkd-vQzf8d' and text()='Gotowe']")
+                self.driver.execute_script("arguments[0].click();", button_accept)
+                is_found = True
+                time.sleep(1)
+
+                flights = self.driver.find_elements(By.XPATH, "//*[@class='pIav2d']")
+                print('ilosc lotow', len(flights))
+                print('-----------------------------')
+                print(flights)
+                for flight in flights:
+                    print(flight)
+
+
+                    airline = flight.find_element(By.XPATH, ".//*[@class='sSHqwe tPgKwe ogfYpf']").text
+                    if 'Ryanair' in airline:
+                        airline = 'Ryanair'
+
+                    departure_time = flight.find_element(By.XPATH,
+                                                      ".//span[@aria-label[contains(., 'Godzina wylotu/odjazdu:')]]/span").text
+                    item_price_date_arrival = item_price_date
+
+                    try:
+                        arrival_time = flight.find_element(By.XPATH,
+                                                         ".//span[@aria-label[contains(., 'Godzina przylotu/przyjazdu:')]]/span").text
+                    except:
+                        arrival_time = flight.find_element(By.XPATH,
+                                                           ".//span[@aria-label[contains(., 'Godzina przyjazdu/przylotu:')]]/span").text
+                        if '+1' in arrival_time:
+                            arrival_time = arrival_time.replace('+1', '')
+                            item_price_date_arrival = item_price_date + timedelta(days=1)
+
+                    print(departure_time, arrival_time)
+
+                    try:
+                        departure_data_time = datetime.strptime(f'{item_price_date} {departure_time}', "%Y-%m-%d %H:%M")
+                    except:
+                        break
+                    arrival_data_time = datetime.strptime(f'{item_price_date_arrival} {arrival_time}', "%Y-%m-%d %H:%M")
+                    purchase_url = self.driver.current_url
+
+
+                    specific_flight = SpecificFlight.objects.filter(departure_city=self.city_departure_instance,
+                                                  arrival_city=self.city_arrival_instance, departure_data_time=departure_data_time, arrival_data_time=arrival_data_time, airline=airline,).first()
+                    if not specific_flight:
+
+                        new_specific_flight = SpecificFlight.objects.create(departure_city=self.city_departure_instance,
+                                                      arrival_city=self.city_arrival_instance, departure_data_time=departure_data_time, arrival_data_time=arrival_data_time, airline=airline, purchase_link=purchase_url)
+
+                        new_specific_flight.save()
+                        print('specific flight ', new_specific_flight.id, ' created!')
+                    else:
+                        specific_flight.departure_city=self.city_departure_instance
+                        specific_flight.arrival_city=self.city_arrival_instance
+                        specific_flight.departure_data_time=departure_data_time
+                        specific_flight.arrival_data_time=arrival_data_time
+                        specific_flight.airline=airline
+                        specific_flight.purchase_link=purchase_url
+                        specific_flight.save()
+                        print('specific flight ', specific_flight.id, ' istniał!')
+
+
+
+
+
+        return is_found
+
+
+
+    def next_calendar_date(self, first_time=False):
+
+        div_element = self.driver.find_element(By.XPATH, "//div[@jsmodel='cZY2O']")
+        div_element.click()
+        time.sleep(1)
+        try:
+            actual_date_string = self.driver.find_element(By.XPATH,
+                                                      "//*[@class='WhDFk Io4vne Ic3tg NXzzqb g7lVZ HDland sYt5sc']").get_attribute(
+            "data-iso")
+        except:
+            pass
+        try:
+            actual_date_string = self.driver.find_element(By.XPATH,
+                                                          "//*[@class='WhDFk Io4vne inxqCf Ic3tg NXzzqb g7lVZ HDland sYt5sc']").get_attribute(
+                "data-iso")
+        except:
+            pass
+        try:
+            actual_date_string = self.driver.find_element(By.XPATH,
+                                                          "//*[@class='WhDFk Io4vne Xu6rJc Ic3tg NXzzqb g7lVZ HDland sYt5sc']").get_attribute(
+                "data-iso")
+        except:
+            pass
+
+
+        actual_date = datetime.strptime(actual_date_string, "%Y-%m-%d").date()
+        print('tera', actual_date)
+
+
+        calendar_dates = self.driver.find_elements(By.XPATH, "//*[@jsname='mG3Az']")
+
+
+
+        if first_time:
+            actual_date = datetime.strptime('2000-01-01', "%Y-%m-%d").date()
+            first_time= False
+
+        is_found = self.click_next_date(actual_date, calendar_dates)
+
+        if not is_found:
+            try:
+                next_btn = self.driver.find_elements(By.XPATH, "//*[@jsname='KpyLEe']")[0]
+                next_btn.click()
+                time.sleep(1)
+                calendar_dates = self.driver.find_elements(By.XPATH, "//*[@jsname='mG3Az']")
+                self.click_next_date(actual_date, calendar_dates)
+            except:
+                print('Brak przycisku nastepna strona')
+                return True
+            time.sleep(1)
+
+
+
+
+
+
+
+
+    def import_specific_flights(self, departure_city, arrival_city):
+
+        logger.info('import_flights')
+
+
+        url = self.get_search_url(departure_city, arrival_city)
+
+        self.go_url_website(url)
+        try:
+            self.accept_cookies()
+        except:
+            pass
+        self.get_cities()
+        self.create_cities()
+        self.open_price_table()
+        self.follow_months_price_table_max_left()
+
+
+        # KLIKA W PIERWSZĄ DATE
+        # calendar_dates = self.driver.find_elements(By.XPATH, "//*[@jsname='mG3Az']")
+        # for calendar_date_element in calendar_dates:
+        #     item_price = calendar_date_element.find_element(By.XPATH, './/*[@jsname="qCDwBb"]')
+        #     item_price_date = datetime.strptime(calendar_date_element.get_attribute("data-iso"), "%Y-%m-%d").date()
+        #
+        #     if item_price.text:
+        #         div_element = self.driver.find_element(By.XPATH, f"//*[@data-iso='{item_price_date}']")
+        #         div_element.click()
+        #         time.sleep(2)
+        #         button_accept = self.driver.find_element(By.XPATH, "//*[@class='VfPpkd-vQzf8d' and text()='Gotowe']")
+        #         self.driver.execute_script("arguments[0].click();", button_accept)
+        #
+        #         time.sleep(2)
+
+        self.next_calendar_date(True)
+
+
+        for x in range(1000):
+            is_finished = self.next_calendar_date()
+            time.sleep(1)
+            if is_finished:
+                break
+
+        print('FINITO!')
 
