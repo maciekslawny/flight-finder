@@ -79,7 +79,7 @@ class InstagramPost(models.Model):
         service = InstagramService()
         service.post = self
         try:
-            # service.publish_post()
+            service.publish_post()
             self.is_published = True
             self.published_date = datetime.now()
             self.save()

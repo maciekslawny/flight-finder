@@ -30,7 +30,7 @@ def home(request):
     ticket_plan_display = TicketPlanDisplay.objects.filter(search__in=searches).order_by(
             'total_price')
 
-    posts = InstagramPost.objects.all().order_by('-published_date')[:8]
+    posts = InstagramPost.objects.all().order_by('-published_date')[:12]
 
     context = {
         'posts': posts,
