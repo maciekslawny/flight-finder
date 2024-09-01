@@ -5,6 +5,7 @@ from django.db import models
 from flightfinder.services import CheapestTicketPlanService, TicketPlanFinder
 from instagramservice.services import InstagramService
 import instagramservice.cities_services as cities_services
+from flightfinder.models import City
 
 # Create your models here.
 
@@ -12,8 +13,8 @@ class InstagramPost(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     description = models.TextField()
     price = models.IntegerField()
-    departure_city = models.CharField(max_length=50)
-    arrival_city = models.CharField(max_length=50)
+    departure_city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='departure_city_instagrampost')
+    arrival_city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='arrival_city_instagrampost')
     flight_date = models.DateField()
     flight_return_date = models.DateField()
     published_date = models.DateTimeField(null=True)
@@ -24,25 +25,25 @@ class InstagramPost(models.Model):
     def generate_description(self):
 
         city_service = None
-        if self.arrival_city == 'Alicante':
+        if self.arrival_city.name == 'Alicante':
             city_service = cities_services.AlicanteService()
-        elif self.arrival_city == 'Malaga':
+        elif self.arrival_city.name == 'Malaga':
             city_service = cities_services.MalagaService()
-        elif self.arrival_city == 'Neapol':
+        elif self.arrival_city.name == 'Neapol':
             city_service = cities_services.NaplesService()
-        elif self.arrival_city == 'Barcelona':
+        elif self.arrival_city.name == 'Barcelona':
             city_service = cities_services.BarcelonaService()
-        elif self.arrival_city == 'Bergamo':
+        elif self.arrival_city.name == 'Bergamo':
             city_service = cities_services.BergamoService()
-        elif self.arrival_city == 'Brindisi':
+        elif self.arrival_city.name == 'Brindisi':
             city_service = cities_services.BrindisiService()
-        elif self.arrival_city == 'Paryz':
+        elif self.arrival_city.name == 'Paryz':
             city_service = cities_services.ParisService()
-        elif self.arrival_city == 'Piza':
+        elif self.arrival_city.name == 'Piza':
             city_service = cities_services.PisaService()
-        elif self.arrival_city == 'Rzym':
+        elif self.arrival_city.name == 'Rzym':
             city_service = cities_services.RomaService()
-        elif self.arrival_city == 'Zadar':
+        elif self.arrival_city.name == 'Zadar':
             city_service = cities_services.ZadarService()
 
         city_desc = city_service.get_random_description()
@@ -74,7 +75,7 @@ class InstagramPost(models.Model):
         service = InstagramService()
         service.post = self
         try:
-            service.publish_post()
+            # service.publish_post()
             self.is_published = True
             self.published_date = datetime.now()
             self.save()

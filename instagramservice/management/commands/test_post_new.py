@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from django.core.management.base import BaseCommand, CommandError
 
+from flightfinder.models import City
 from flightfinder.services import CheapestTicketPlanService, TicketPlanFinder
 from instagramservice.models import InstagramPost
 from instagramservice.cities_services import AlicanteService
@@ -52,7 +53,7 @@ class Command(BaseCommand):
         for x in range(amount):
             item = published_posts.order_by('-published_date')[x]
             print(item, item.arrival_city, last_used_cities)
-            last_used_cities.append(item.arrival_city)
+            last_used_cities.append(item.arrival_city.name)
 
         print('last_used_cities', last_used_cities)
         tickets = []
@@ -70,7 +71,7 @@ class Command(BaseCommand):
         flight_date = str(selected_ticket.ticket.flight.flight_date)
         flight_return_date = str(selected_ticket.return_ticket.flight.flight_date)
 
-        new_post = InstagramPost(description = '', price = price, departure_city = departure_city, arrival_city=arrival_city, flight_date=flight_date, flight_return_date=flight_return_date)
+        new_post = InstagramPost(description = '', price = price, departure_city = City.objects.get(name= departure_city), arrival_city=City.objects.get(name= arrival_city), flight_date=flight_date, flight_return_date=flight_return_date)
         new_post.save()
 
         new_post.generate_image()

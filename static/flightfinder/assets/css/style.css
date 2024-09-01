@@ -1095,7 +1095,7 @@ section {
 }
 
 .team .member img {
-  transition: all ease-in-out 0.4s;
+  transition: all ease-in-out 0.2s;
 }
 
 .team .member:hover img {
@@ -1113,10 +1113,87 @@ section {
   box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
 }
 
+.test {
+  position: relative;
+  bottom: -45px;
+  left: 9.5em;
+  right: 0px;
+  font-size: 1.4em;
+  color: white;
+  background: rgb(22, 90, 161);
+  z-index: 10;
+  padding: 5px 10px;
+  border-radius: 8px;
+}
+
+@media (max-width: 419px) {
+  .test {
+    top: 2.5em;
+    font-size: 1.5em; /* Mniejszy rozmiar czcionki */
+    left: 72%;
+    max-width: 100%;
+
+  }
+}
+
+@media (min-width: 420px) and (max-width: 766px) {
+  .test {
+    top: 2.5em;
+    font-size: 1.8em; /* Mniejszy rozmiar czcionki */
+    left: 75%;
+    max-width: 100%;
+
+  }
+}
+
+
+
+@media (min-width: 767px) and (max-width: 992px) {
+  .test {
+    font-size: 1.7em; /* Mniejszy rozmiar czcionki */
+    top: 2em;
+    left: 8.5em; /* Zmniejszona pozycja w lewo */
+
+  }
+}
+
+
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .test {
+    font-size: 1.3em;
+    top: 40px;
+    left: 6.5em; /* Dopasowana pozycja w lewo */
+    padding: 4px 8px; /* Umiarkowany padding */
+    bottom: -35px; /* Inna wartość dla dolnej pozycji */
+  }
+}
+
+
+/* Dla średnich ekranów (np. tablety) */
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .test {
+    font-size: 1.5em;
+    top: 2em;
+    left: 7.1em; /* Dopasowana pozycja w lewo */
+    padding: 4px 8px; /* Umiarkowany padding */
+    bottom: -35px; /* Inna wartość dla dolnej pozycji */
+  }
+}
+
+/* Dla większych ekranów (np. laptopy i większe monitory) */
+@media (min-width: 1400px) {
+  .test {
+    top: 2.1em;
+    font-size: 1.8em;
+    left: 6.8em; /* Domyślna pozycja w lewo */
+  }
+}
+
 .team .member h4 {
   font-weight: 700;
   margin-bottom: 10px;
-  font-size: 16px;
+  font-size: 20px;
   color: #01036f;
   position: relative;
   padding-bottom: 10px;
@@ -1131,6 +1208,15 @@ section {
   background: #0d12fc;
   bottom: 0;
   left: calc(50% - 25px);
+}
+
+.text-card-style {
+  font-weight: 700;
+  margin-bottom: 10px;
+  font-size: 20px;
+  color: #01036f;
+  position: relative;
+  padding-bottom: 10px;
 }
 
 .team .member span {

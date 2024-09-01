@@ -1,6 +1,9 @@
 from django.urls import path, include
 
+from config import settings
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -10,3 +13,6 @@ urlpatterns = [
     path('update/<slug:departure_city>/<slug:arrival_city>', views.update, name='update'),
     path('destination/<slug:departure_city>/<slug:arrival_city>', views.destination_view, name='destination'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
