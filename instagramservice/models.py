@@ -22,6 +22,10 @@ class InstagramPost(models.Model):
     is_hot_deal = models.BooleanField(default=False)
     is_image_generated = models.BooleanField(default=False)
 
+    @property
+    def get_duration(self):
+        return (self.flight_return_date - self.flight_date).days
+
     def generate_description(self):
 
         city_service = None

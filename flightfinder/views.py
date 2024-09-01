@@ -42,6 +42,19 @@ def home(request):
     return render(request, 'flightfinder/index.html', context)
 
 
+def offer_detail(request, pk):
+    from_search_date = datetime.now().date()
+    to_search_date = datetime.now().date() + timedelta(days=100)
+    print(from_search_date, to_search_date)
+
+
+    context = {
+        'post': InstagramPost.objects.get(id=pk),
+    }
+
+    return render(request, 'flightfinder/offer.html', context)
+
+
 def panel(request):
     from_search_date = datetime.now().date()
     to_search_date = datetime.now().date() + timedelta(days=100)
@@ -71,7 +84,7 @@ def panel(request):
         'sidebar_destinations': get_sidebar_destinations()
     }
 
-    return render(request, 'flightfinder/index.html', context)
+    return render(request, 'flightfinder/index-panel.html', context)
 
 
 def fact_posts(request):
