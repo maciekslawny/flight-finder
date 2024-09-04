@@ -144,3 +144,10 @@ CELERY_BROKER_URL = 'amqp://guest:guest@rabbitmq:5672/'
 app = Celery('config')  # Zmiana 'your_app_name' na nazwę Twojej aplikacji
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
+
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://lotyokazje.pl',
+    'https://www.lotyokazje.pl',
+    'https://141.95.52.244'
+]
