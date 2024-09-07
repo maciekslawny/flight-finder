@@ -3,6 +3,7 @@ from flightfinder.models import Flight, FlightPrice, City, FlightSearch, Sidebar
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 import subprocess
+import time
 
 from flightfinder.services import CheapestTicketPlanService, TicketPlanFinder, ImportFlightsData
 from flightfinder.ultis import get_sidebar_destinations
@@ -55,7 +56,42 @@ def offer_detail(request, pk):
     return render(request, 'flightfinder/offer.html', context)
 
 
+def offer_search(request, pk):
+    from_search_date = datetime.now().date()
+    to_search_date = datetime.now().date() + timedelta(days=100)
+    print(from_search_date, to_search_date)
+
+    departure_city = City.objects.get(name="Gdansk")
+    searches = []
+
+    for arrival_city in ['Alicante', 'Malaga', 'Neapol', 'Piza', 'Bergamo', 'Brindisi', 'Rzym', 'Barcelona', 'Zadar',
+                         'Paryz']:
+        searches.append(TicketPlanSearchDisplay.objects.filter(departure_city=departure_city,
+                                                               arrival_city=City.objects.get(
+                                                                   name=arrival_city)).order_by('created_at').first())
+
+        print('SEARCH', TicketPlanSearchDisplay.objects.filter(departure_city=departure_city,
+                                                               arrival_city=City.objects.get(
+                                                                   name=arrival_city)).order_by(
+            '-created_at').first().created_at)
+
+    ticket_plan_display = TicketPlanDisplay.objects.filter(search__in=searches).order_by(
+        'total_price')
+
+    posts = InstagramPost.objects.all().order_by('-published_date')[:12]
+
+    context = {
+        'posts': posts,
+        'cities': City.objects.all(),
+        'updates': FlightSearch.objects.all().order_by('-search_date')[:10],
+        'sidebar_destinations': get_sidebar_destinations()
+    }
+
+    return render(request, 'flightfinder/offer-search.html', context)
+
+
 def panel(request):
+    before = time.time()
     from_search_date = datetime.now().date()
     to_search_date = datetime.now().date() + timedelta(days=100)
     print(from_search_date, to_search_date)
@@ -78,13 +114,20 @@ def panel(request):
         'total_price')
 
     context = {
-        'tickets': ticket_plan_display,
+        'tickets': ticket_plan_display[:200],
         'cities': City.objects.all(),
         'updates': FlightSearch.objects.all().order_by('-search_date')[:10],
         'sidebar_destinations': get_sidebar_destinations()
     }
 
-    return render(request, 'flightfinder/index-panel.html', context)
+    after = time.time()
+    print('CZAS:', after - before)
+
+    before = time.time()
+    x = render(request, 'flightfinder/index-panel.html', context)
+    after = time.time()
+    print('TUTAJ TESTUJE', 'CZAS:', after - before)
+    return x
 
 
 def fact_posts(request):
