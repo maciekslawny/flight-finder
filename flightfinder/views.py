@@ -125,51 +125,59 @@ def offer_search(request, departure_city=None, arrival_city=None, from_date='01-
                                                                    name=arrival_city)).order_by('created_at').first())
 
     else:
+        all_queryset_ids = []
         for arrival_city in ['Alicante', 'Malaga', 'Neapol', 'Piza', 'Bergamo', 'Brindisi', 'Rzym', 'Barcelona', 'Zadar',
                              'Paryz']:
+
             searches.append(TicketPlanSearchDisplay.objects.filter(departure_city=departure_city,
                                                                    arrival_city=City.objects.get(
                                                                        name=arrival_city)).order_by('created_at').first())
+            search = TicketPlanSearchDisplay.objects.filter(departure_city=departure_city,
+                                                                   arrival_city=City.objects.get(
+                                                                       name=arrival_city)).order_by('created_at').first()
+            results = TicketPlanDisplay.objects.filter(
+                search=search,
+                ticket__flight__flight_date__gte=from_date,
+                return_ticket__flight__flight_date__lte=to_date,
+                duration__lte=max_days,
+                duration__gte=MIN_DAYS).order_by('total_price')[:15]
 
 
-
-    ticket_plans = TicketPlanDisplay.objects.filter(search__in=searches, ticket__flight__flight_date__gte=from_date, return_ticket__flight__flight_date__lte=to_date, duration__lte=max_days, duration__gte=MIN_DAYS).order_by(
-        'total_price')
+            ticket_plans = TicketPlanDisplay.objects.filter(search__in=searches, ticket__flight__flight_date__gte=from_date, return_ticket__flight__flight_date__lte=to_date, duration__lte=max_days, duration__gte=MIN_DAYS).order_by(
+                'total_price')
+            for ticket_plan in results:
+                all_queryset_ids.append(ticket_plan.id)
 
 
 
     ticket_plans = TicketPlanDisplay.objects.filter(
-        search__in=searches,
-        ticket__flight__flight_date__gte=from_date,
-        return_ticket__flight__flight_date__lte=to_date,
-        duration__lte=max_days,
-        duration__gte=MIN_DAYS
-    ).order_by('total_price', 'ticket__flight__arrival_city')
+        id__in=all_queryset_ids).order_by('total_price', 'ticket__flight__arrival_city')
 
-    from collections import defaultdict, deque
+    from collections import defaultdict
 
     # Grupowanie biletów według nazwy miasta przylotu
     grouped_tickets = defaultdict(list)
+
+    # Tworzenie grup na podstawie arrival_city.name
     for ticket in ticket_plans:
         city_name = ticket.ticket.flight.arrival_city.name
         grouped_tickets[city_name].append(ticket)
 
-    # Zamieniamy grupy na deque (kolejki)
+    # Zamieniamy grupy na deque (kolejki), co pozwala szybciej usuwać elementy z przodu listy
+    from collections import deque
     city_queues = {city: deque(tickets) for city, tickets in grouped_tickets.items()}
 
-    # Naprzemienne pobieranie biletów, nawet jeśli któreś miasto się wyczerpie
+    # Naprzemienne pobieranie biletów z każdej grupy
     sorted_tickets = []
     cities = list(city_queues.keys())  # Lista miast do iteracji
 
-    while city_queues:  # Dopóki istnieją miasta z dostępnymi biletami
+    while city_queues:
         for city in cities[:]:  # Tworzymy kopię listy miast do iteracji
-            if city in city_queues and city_queues[city]:  # Jeśli są bilety dla tego miasta
-                sorted_tickets.append(city_queues[city].popleft())  # Pobieramy bilet z tego miasta
-            if not city_queues[city]:  # Jeśli nie ma więcej biletów dla tego miasta
-                del city_queues[city]  # Usuwamy miasto z dostępnych
-                cities.remove(city)  # Usuwamy miasto z listy do iteracji
-
-    # sorted_tickets zawiera teraz bilety z naprzemiennym wyborem miast
+            if city in city_queues and city_queues[city]:  # Sprawdzamy, czy są jeszcze bilety dla miasta
+                sorted_tickets.append(city_queues[city].popleft())  # Pobieramy bilet
+            if not city_queues[city]:  # Jeśli nie ma więcej biletów dla tego miasta, usuwamy je z listy
+                del city_queues[city]
+                cities.remove(city)
 
 
     paginator = Paginator(sorted_tickets, 12)
