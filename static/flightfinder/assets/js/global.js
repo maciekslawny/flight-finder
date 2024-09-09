@@ -5,18 +5,17 @@
     
     
     try {
-    
-        $('#input-start').daterangepicker({
+
+        $('#input-start-class').daterangepicker({
             ranges: true,
             autoApply: true,
             applyButtonClasses: false,
             autoUpdateInput: false
         },function (start, end) {
-            $('#input-start').val(start.format('MM/DD/YYYY'));
-            $('#input-end').val(end.format('MM/DD/YYYY'));
+            $('#input-start-class').val(start.format('DD-MM-YYYY'));
+            $('#input-end-class').val(end.format('DD-MM-YYYY'));
         });
-    
-    
+
     } catch(er) {console.log(er);}
     /*==================================================================
         [ Input Number ]*/

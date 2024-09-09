@@ -94,50 +94,51 @@
 <!-- ======= Team Section ======= -->
 <section id="team" class="team mt-5">
     <div class="container">
-        <div class="section-title" data-aos="fade-up">
-            <h2>Aktualne</h2>
-            <p>Nasze Propozycje</p>
+        <div class="section-title">
+            <h2>Nasza</h2>
+            <p>Wyszukiwarka</p>
         </div>
 
-        <div class="bg-color-1 pt-2 pb-2" data-aos="zoom-in" data-aos-delay="0">
+        <div class="bg-color-1 pt-2 pb-2">
             <div class="wrapper">
                 <div class="card card-7 p-2 pt-4">
                     <div class="card-body">
-                        <form class="form" method="POST" action="#">
+                        <form class="form" method="POST" action="/search">
+                            {% csrf_token %}
                             <div class="input-group input--large test-pink">
                                 <label class="label">Skąd?</label>
 
-                                <select class="select-own" aria-label="Default select example">
-                                    <option class="select-first-option" selected>Wszystkie</option>
-                                    <option value="1">Gdańsk</option>
-                                    <option value="2">Warszawa</option>
-                                    <option value="3">Poznan</option>
+                                <select class="select-own" name="departure_city" aria-label="Default select example">
+                                    <option value="all" class="select-first-option" selected>Wszystkie</option>
+                                    {% for departure_city in flight_connections_dict %}
+                                       <option value="{{ departure_city }}">{{ departure_city }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                             <div class="input-group input--large test-pink">
                                 <label class="label">Dokąd?</label>
 
-                                <select class="select-own" aria-label="Default select example">
-                                    <option class="select-first-option" selected>Wszystkie</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Brzęczyszczykiewicz</option>
+                                <select class="select-own" name="arrival_city" aria-label="Default select example">
+                                    <option value="all" class="select-first-option" selected>Wszystkie</option>
+                                    {% for arrival_city in arrival_cities %}
+                                    <option value="{{ arrival_city }}">{{ arrival_city }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                             <div class="input-group input--medium test-pink">
                                 <label class="label">Wylot od</label>
-                                <input class="input--style-1" type="text" name="checkin" placeholder="mm/dd/yyyy"
-                                       id="input-start">
+                                <input class="input--style-1" type="text" name="from_date" placeholder="dd/mm/yyyy"
+                                       id="input-start-class">
                             </div>
                             <div class="input-group input--medium test-pink">
                                 <label class="label">Powrót do</label>
-                                <input class="input--style-1" type="text" name="checkout" placeholder="mm/dd/yyyy"
-                                       id="input-end">
+                                <input class="input--style-1" type="text" name="to_date" placeholder="dd/mm/yyyy"
+                                       id="input-end-class">
                             </div>
                             <div class="input-group input--medium test-pink">
                                 <label class="label">Ilość dni (max)</label>
                                 <input class="input--style-1" type="text" placeholder="7"
-                                       name="going">
+                                       name="max_days">
                             </div>
 
                             <button class="btn-submit test-pink" type="submit">Szukaj</button>
@@ -150,22 +151,24 @@
         <div class="row" data-aos="fade-left">
 
 
-            {% for post in posts %}
-                <div class="col-lg-3 col-md-6 mb-4">
+            {% for ticket_plan in page_obj %}
 
 
-                    <span class="test" data-aos="zoom-in" data-aos-delay="1"><b>{{ post.price }} zł</b></span>
-                    <a href="/okazja/{{ post.id }}">
+                <div class="col-lg-3 col-md-6 mb-4 ">
+
+
+                    <span class="test" data-aos="zoom-in" data-aos-delay="1"><b>{{ ticket_plan.total_price }} zł</b></span>
+                    <a href="/okazja/{{ ticket_plan.ticket.flight.departure_city.name }}/{{ ticket_plan.ticket.flight.arrival_city.name }}/{{ ticket_plan.ticket.flight.get_flight_date_str }}/{{ ticket_plan.return_ticket.flight.get_flight_date_str }}">
                         <div class="member" data-aos="zoom-in" data-aos-delay="1">
                             <div class="pic">
-                                <img src="{{ post.arrival_city.thumbnail_image.url }}" class="img-fluid" alt="">
+                                <img src="{{ ticket_plan.ticket.flight.arrival_city.thumbnail_image.url }}" class="img-fluid" alt="">
 
                             </div>
 
                             <div class="member-info">
-                                <h4>{{ post.arrival_city }} - {{ post.get_duration }} dni </h4>
-                                <span class="">{{ post.flight_date }} - {{ post.flight_return_date }}</span>
-                                <span>Z <b>{{ post.departure_city.genitive }}</b></span>
+                                <h4>{{ ticket_plan.ticket.flight.arrival_city.name }} - {{ ticket_plan.duration }} dni </h4>
+                                <span class="">{{ ticket_plan.ticket.flight.get_flight_date_str }} - {{ ticket_plan.return_ticket.flight.get_flight_date_str }}</span>
+                                <span>Z <b>{{ ticket_plan.ticket.flight.departure_city.genitive }}</b></span>
 
                             </div>
 
@@ -176,6 +179,35 @@
 
         </div>
     </div>
+
+
+    <div class="d-flex justify-content-center">
+        <nav aria-label="...">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li class="page-item ">
+                        <a href="?page={{ page_obj.previous_page_number }}" class="page-link p-3"><h4>< Poprzednia</h4></a>
+                    </li>
+                    <li class="page-item"><a class="page-link p-3" href="?page=1"><h4>1</h4></a></li>
+                {% endif %}
+
+                <li class="page-item active" aria-current="page">
+                    <span class="page-link p-3"><h4>{{ page_obj.number }}</h4></span>
+                </li>
+
+                {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link p-3"
+                                             href="?page={{ page_obj.paginator.num_pages }}"><h4>{{ page_obj.paginator.num_pages }}</h4></a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link p-3" href="?page={{ page_obj.next_page_number }}"><h4>Następna ></h4></a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+
+
 </section><!-- End Team Section -->
 
 

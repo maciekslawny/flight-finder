@@ -116,7 +116,7 @@
                                                 <i class="bi bi-cash-coin"></i>
                                             </div>
                                             <div class="ps-3">
-                                                <h6>{{ post.price }} PLN</h6>
+                                                <h6>{{ ticket_plan.total_price }} PLN</h6>
                                                 <span class=" small pt-1 fw-bold">W obie strony.</span>
 
                                             </div>
@@ -140,7 +140,7 @@
                                                 <i class="bi bi-brightness-alt-high-fill"></i>
                                             </div>
                                             <div class="ps-3">
-                                                <h6>{{ post.get_duration }} dni</h6>
+                                                <h6>{{ ticket_plan.duration }} dni</h6>
 
                                             </div>
                                         </div>
@@ -164,8 +164,8 @@
                                                 <i class="bi bi-calendar-date"></i>
                                             </div>
                                             <div class="ps-3">
-                                                <span><b>12.09.2024 -</b></span>
-                                                <span><b>12.09.2024</b></span>
+                                                <span><b>{{ ticket_plan.ticket.flight.get_flight_date_str }} -</b></span> <br>
+                                                <span><b>{{ ticket_plan.return_ticket.flight.get_flight_date_str }}</b></span>
                                                 <span class="text-danger small pt-1 fw-bold"></span> <span
                                                     class="text-muted small pt-2 ps-1"></span>
 
@@ -192,8 +192,8 @@
                                                 <i class="bi bi bi-ticket-detailed"></i>
                                             </div>
                                             <div class="ps-3">
-                                                <h6>{{ post.departure_city.name }} - {{ post.arrival_city.name }}</h6>
-                                                <span class=" small pt-1 fw-bold">{{ post.flight_date }}</span>
+                                                <h6>{{ ticket_plan.ticket.flight.departure_city.name }} - {{ ticket_plan.ticket.flight.arrival_city.name }}</h6>
+                                                <span class=" small pt-1 fw-bold">{{ ticket_plan.ticket.flight.flight_date }}</span>
                                                 <br>
                                                 <button class="btn btn-primary mt-3">Kup Bilet</button>
 
@@ -218,8 +218,8 @@
                                                 <i class="bi bi-ticket-detailed"></i>
                                             </div>
                                             <div class="ps-3">
-                                                <h6>{{ post.arrival_city.name }} - {{ post.departure_city.name }}</h6>
-                                                <span class=" small pt-1 fw-bold">{{ post.flight_return_date }}</span>
+                                                <h6>{{ ticket_plan.return_ticket.flight.departure_city.name }} - {{ ticket_plan.return_ticket.flight.arrival_city.name }}</h6>
+                                                <span class=" small pt-1 fw-bold">{{ ticket_plan.return_ticket.flight.flight_date }}</span>
                                                 <br>
                                                 <button class="btn btn-primary mt-3">Kup Bilet</button>
 
@@ -255,10 +255,10 @@
 
                             <!-- Card with an image on top -->
                             <div class="card">
-                                <img src="{{ post.arrival_city.thumbnail_image.url }}" class="card-img-top" alt="...">
+                                <img src="{{ ticket_plan.ticket.flight.arrival_city.thumbnail_image.url }}" class="card-img-top" alt="...">
                                 <div class="card-body">
-                                    <h5 class="card-title">{{ post.arrival_city }} - {{ post.get_duration }} dni.</h5>
-                                    <p class="card-text">Oferta przedstawia lot do {{ post.arrival_city.genitive }} z {{ post.departure_city.genitive }} oraz bilet powrotny za kwotę {{ post.price }} pln. Długość pobytu to {{ post.get_duration }} dni, wylot z {{ post.departure_city.genitive }} zaplanowany jest na dzień {{ post.flight_date }} i powrót z {{ post.arrival_city.genitive }} w dniu {{ post.flight_return_date }}. </p>
+                                    <h5 class="card-title">{{ ticket_plan.ticket.flight.arrival_city }} - {{ ticket_plan.duration }} dni.</h5>
+                                    <p class="card-text">Oferta przedstawia lot do {{ ticket_plan.ticket.flight.arrival_city.genitive }} z {{ ticket_plan.ticket.flight.departure_city.genitive }} oraz bilet powrotny za kwotę {{ ticket_plan.total_price }} pln. Długość pobytu to {{ ticket_plan.duration }} dni, wylot z {{ ticket_plan.ticket.flight.departure_city.genitive }} zaplanowany jest na dzień {{ ticket_plan.ticket.flight.flight_date }} i powrót z {{ ticket_plan.ticket.flight.arrival_city.genitive }} w dniu {{ ticket_plan.return_ticket.flight.flight_date }}. </p>
                                 </div>
                             </div><!-- End Card with an image on top -->
 

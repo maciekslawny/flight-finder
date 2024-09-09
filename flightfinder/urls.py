@@ -7,9 +7,10 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('okazja/<int:pk>', views.offer_detail, name='offer_detail'),
+    path('okazja/<slug:departure_city>/<slug:arrival_city>/<slug:ticket_date>/<slug:ticket_return_date>', views.offer_detail, name='offer_detail'),
 
-    path('search/<int:pk>', views.offer_search, name='offer_search'),
+    path('search', views.offer_search, name='offer_search'),
+    path('search/<slug:departure_city>/<slug:arrival_city>/<slug:from_date>/<slug:to_date>/<slug:max_days>', views.offer_search, name='offer_search'),
     path('panel', views.panel, name='panel'),
     path('admin-panel/fact-posts', views.fact_posts, name='fact-posts'),
     path('admin-panel/fact-posts/<int:pk>', views.fact_posts_detail, name='fact-posts-detail'),

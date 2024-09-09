@@ -10,6 +10,16 @@ class City(models.Model):
     def __str__(self):
         return self.name
 
+class FlightConnect(models.Model):
+    departure_city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='departure_city_flightconnect')
+    arrival_city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='arrival_city_flightconnect')
+    is_active = models.BooleanField(default=True)
+    flight_google_link = models.CharField(max_length=256)
+    flight_return_google_link = models.CharField(max_length=256)
+
+    def __str__(self):
+        return f'{self.departure_city.name} - {self.arrival_city.name} / {self.is_active}'
+
 
 class SpecificFlight(models.Model):
     departure_city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='departure_specific_flight')
@@ -34,6 +44,10 @@ class Flight(models.Model):
     def get_weekday(self):
         week_days = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela']
         return week_days[self.flight_date.weekday()]
+
+    @property
+    def get_flight_date_str(self):
+        return str(self.flight_date.strftime("%d-%m-%Y"))
 
     def __str__(self):
         return f'{self.departure_city} - {self.arrival_city} - {self.flight_date}'
