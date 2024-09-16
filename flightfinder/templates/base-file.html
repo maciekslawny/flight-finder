@@ -62,10 +62,12 @@
 
         <nav id="navbar" class="navbar">
             <ul>
-                <li><a class="nav-link scrollto active" href="#hero">Główna</a></li>
-                <li><a class="nav-link scrollto" href="#team">Propozycje</a></li>
-                <li><a class="nav-link scrollto" href="#about">Informacja</a></li>
-                <li><a class="nav-link scrollto" href="#contact">Kontakt</a></li>
+                <li><a class="nav-link scrollto" {% if header_transparent_class %}href="#hero"{% else %}href="/#hero"{% endif %}>Główna</a></li>
+                <li><a class="nav-link scrollto" {% if header_transparent_class %}href="#team"{% else %}href="/#team"{% endif %}>Propozycje</a></li>
+                <li><a class="nav-link scrollto" {% if header_transparent_class %}href="#about"{% else %}href="/#about"{% endif %}>Informacja</a></li>
+                <li><a class="nav-link scrollto" {% if header_transparent_class %}href="#contact"{% else %}href="/#contact"{% endif %}>Kontakt</a></li>
+                <li><a class="nav-link scrollto {% if is_searcher %} active {% endif %}" href="/search">Wyszukiwarka</a></li>
+
                 {#                <li class="dropdown"><a href="#"><span>Drop Down</span> <i class="bi bi-chevron-down"></i></a>#}
                 {#                    <ul>#}
                 {#                        <li><a href="#">Drop Down 1</a></li>#}

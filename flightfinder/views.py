@@ -225,6 +225,7 @@ def offer_search(request, departure_city=None, arrival_city=None, from_date='01-
         'from_date': from_date,
         'to_date': to_date,
         'max_days': max_days,
+        'is_searcher': True,
     }
 
     return render(request, 'flightfinder/offer-search.html', context)
