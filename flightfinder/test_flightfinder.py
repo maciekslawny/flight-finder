@@ -1,4 +1,4 @@
-import pytest
+mport pytest
 from flightfinder.models import City
 
 @pytest.mark.django_db

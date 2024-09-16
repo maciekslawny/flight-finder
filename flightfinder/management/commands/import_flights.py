@@ -12,7 +12,7 @@ import undetected_chromedriver as uc
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from datetime import datetime
-from flightfinder.models import City, FlightPrice, Flight, FlightSearch
+from flightfinder.models import City, FlightPrice, Flight, FlightSearch, FlightConnect
 
 from flightfinder.services import ImportFlightsData
 
@@ -30,26 +30,22 @@ class Command(BaseCommand):
         departure_city = options['departure_city']
         arrival_city = options['arrival_city']
 
-        if not departure_city:
 
-            destinations_list = [['Gdansk', 'Alicante'], ['Gdansk', 'Malaga'], ['Gdansk', 'Neapol'], ['Gdansk', 'Piza'],
-                                 ['Gdansk', 'Bergamo'], ['Gdansk', 'Brindisi'], ['Gdansk', 'Rzym'], ['Gdansk', 'Barcelona'],
-                                 ['Gdansk', 'Zadar'], ['Gdansk', 'Paryz']]
 
-            test = ImportFlightsData()
-            test.setup_chrome_driver()
+        flight_connects = FlightConnect.objects.filter(is_active=True)
 
-            for destination in destinations_list:
+        import_service = ImportFlightsData()
+        import_service.setup_chrome_driver()
 
-                test.import_specific_flights(destination[0], destination[1])
-                test.import_specific_flights(destination[1], destination[0])
-            test.quit_driver()
 
-        else:
-            test = ImportFlightsData()
-            test.setup_chrome_driver()
-            test.import_specific_flights(departure_city, arrival_city)
-            test.quit_driver()
+        for flight_connect in flight_connects:
+            try:
+                import_service.import_flights(flight_connect)
+            except:
+                print('Error with ', flight_connect.departure_city.name, flight_connect.arrival_city.name)
+        import_service.quit_driver()
+
+
 
 
 

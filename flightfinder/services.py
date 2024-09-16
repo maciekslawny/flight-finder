@@ -4,7 +4,7 @@ from math import expm1
 from sys import flags
 from typing import Protocol
 
-from flightfinder.models import FlightPrice, City, FlightSearch, Flight, TicketPlanSearchDisplay, TicketPlanDisplay, SpecificFlight
+from flightfinder.models import FlightPrice, City, FlightSearch, Flight, TicketPlanSearchDisplay, TicketPlanDisplay, SpecificFlight, FlightConnect
 import time
 from selenium.webdriver.common.by import By
 from datetime import datetime
@@ -174,7 +174,7 @@ class ImportFlightsData():
         chromeOptions.add_argument('--disable-dev-shm-usage')
         chromeOptions.add_argument("--disable-extensions")
         chromeOptions.add_argument("--ignore-certificate-errors")
-        chromeOptions.headless = True
+        chromeOptions.add_argument("--window-size=1920,1080")
 
         # s = Service("/usr/bin/chromedriver")
         driver = webdriver.Chrome(options=chromeOptions)
@@ -270,15 +270,16 @@ class ImportFlightsData():
     def quit_driver(self):
         self.driver.quit()
 
-    def import_flights(self, departure_city, arrival_city):
+    def import_flights(self, flight_connect):
 
         logger.info('import_flights')
 
+
         for i, num in enumerate([1, 2]):
             if num == 1:
-                url = self.get_search_url(departure_city, arrival_city)
+                url = flight_connect.flight_google_link
             else:
-                url = self.get_search_url(arrival_city, departure_city)
+                url = flight_connect.flight_return_google_link
             self.go_url_website(url)
             try:
                 self.accept_cookies()
@@ -289,6 +290,55 @@ class ImportFlightsData():
             self.open_price_table()
             self.follow_months_price_table()
             self.scan_all_months()
+
+        # Tutaj dodać robienie TicketPlanSearchDisplay i TicketPlanDisplay
+        print(f'Rozpoczęcie - tworzenie TicketPlanSearchDisplay i TicketPlanDisplay dla {flight_connect.departure_city} - {flight_connect.arrival_city}')
+        departure_city = flight_connect.departure_city
+        arrival_city = flight_connect.arrival_city
+        min_duration = 1
+        max_duration = 14
+
+        flights = []
+        ticket_plan_search = TicketPlanSearchDisplay(departure_city=departure_city,
+                                                     arrival_city=arrival_city)
+        ticket_plan_search.save()
+
+
+        flight_search = FlightSearch.objects.filter(departure_city=departure_city,
+                                                    arrival_city=arrival_city).order_by(
+            '-search_date').first()
+
+        flight_prices = FlightPrice.objects.filter(flight_search=flight_search)
+
+        for flight_price in flight_prices:
+            flight_search_return = FlightSearch.objects.filter(departure_city=arrival_city,
+                                                               arrival_city=departure_city).order_by(
+                '-search_date').first()
+
+            return_flight_prices = FlightPrice.objects.filter(flight_search=flight_search_return,
+                                                              flight__flight_date__gt=flight_price.flight.flight_date + timedelta(
+                                                                  days=min_duration - 1),
+                                                              flight__flight_date__lte=flight_price.flight.flight_date + timedelta(
+                                                                  days=max_duration))
+            for return_flight_price in return_flight_prices:
+                duration = return_flight_price.flight.flight_date - flight_price.flight.flight_date
+                total_price = flight_price.price + return_flight_price.price
+                weekend_days = get_weekend_days_amount(flight_price.flight.flight_date,
+                                                       return_flight_price.flight.flight_date)
+
+                ticket_plan_display = TicketPlanDisplay(search=ticket_plan_search, ticket=flight_price,
+                                                        return_ticket=return_flight_price, duration=duration.days,
+                                                        total_price=total_price, weekend_days=weekend_days)
+                ticket_plan_display.save()
+
+        print(f'Zakończenie - tworzenie TicketPlanSearchDisplay i TicketPlanDisplay dla {flight_connect.departure_city} - {flight_connect.arrival_city}')
+
+
+
+
+
+
+        # Tutaj usunąć wszystkie wcześniejsze TicketPlanDisplay dla tego flight_connect
 
 
 
@@ -331,15 +381,19 @@ class ImportFlightsData():
                 print('-----------------------------')
                 print(flights)
                 for flight in flights:
-                    print(flight)
+                    print('Fliight: ', flight)
 
 
                     airline = flight.find_element(By.XPATH, ".//*[@class='sSHqwe tPgKwe ogfYpf']").text
                     if 'Ryanair' in airline:
                         airline = 'Ryanair'
 
+                    print('airline', airline)
+
                     departure_time = flight.find_element(By.XPATH,
                                                       ".//span[@aria-label[contains(., 'Godzina wylotu/odjazdu:')]]/span").text
+                    print('departure_time', departure_time)
+
                     item_price_date_arrival = item_price_date
 
                     try:
@@ -352,11 +406,12 @@ class ImportFlightsData():
                             arrival_time = arrival_time.replace('+1', '')
                             item_price_date_arrival = item_price_date + timedelta(days=1)
 
-                    print(departure_time, arrival_time)
+                    print('arival', arrival_time)
 
                     try:
                         departure_data_time = datetime.strptime(f'{item_price_date} {departure_time}', "%Y-%m-%d %H:%M")
                     except:
+                        print('breakuje')
                         break
                     arrival_data_time = datetime.strptime(f'{item_price_date_arrival} {arrival_time}', "%Y-%m-%d %H:%M")
                     purchase_url = self.driver.current_url
@@ -447,22 +502,27 @@ class ImportFlightsData():
 
 
 
-    def import_specific_flights(self, departure_city, arrival_city):
+    def import_specific_flights(self, flight_connect):
 
-        logger.info('import_flights')
+        for i, num in enumerate([1, 2]):
+            if num == 1:
+                url = flight_connect.flight_google_link
+            else:
+                url = flight_connect.flight_return_google_link
+            self.go_url_website(url)
+            try:
+                self.accept_cookies()
+            except:
+                pass
+
+            logger.info('import_flights')
 
 
-        url = self.get_search_url(departure_city, arrival_city)
 
-        self.go_url_website(url)
-        try:
-            self.accept_cookies()
-        except:
-            pass
-        self.get_cities()
-        self.create_cities()
-        self.open_price_table()
-        self.follow_months_price_table_max_left()
+            self.get_cities()
+            self.create_cities()
+            self.open_price_table()
+            self.follow_months_price_table_max_left()
 
 
         # KLIKA W PIERWSZĄ DATE
@@ -480,14 +540,14 @@ class ImportFlightsData():
         #
         #         time.sleep(2)
 
-        self.next_calendar_date(True)
+            self.next_calendar_date(True)
 
 
-        for x in range(1000):
-            is_finished = self.next_calendar_date()
-            time.sleep(1)
-            if is_finished:
-                break
+            for x in range(1000):
+                is_finished = self.next_calendar_date()
+                time.sleep(1)
+                if is_finished:
+                    break
 
         print('FINITO!')
 

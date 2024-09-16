@@ -31,6 +31,12 @@ class SpecificFlight(models.Model):
     arrival_airport = models.CharField(max_length=24, blank=True, null=True)
     purchase_link = models.CharField(max_length=256, blank=True, null=True)
 
+    def get_departure_time(self):
+        return self.departure_data_time.time().strftime("%H:%M")
+
+    def get_arrival_time(self):
+        return self.arrival_data_time.time().strftime("%H:%M")
+
     def __str__(self):
         return f'{self.departure_city} - {self.arrival_city} | {str(self.departure_data_time)[0:16]}'
 
@@ -69,12 +75,9 @@ class FlightPrice(models.Model):
     flight_search = models.ForeignKey(FlightSearch, on_delete=models.CASCADE)
 
     @property
-    def get_specific_ticket(self):
+    def get_specific_tickets(self):
         specific_tickets = SpecificFlight.objects.filter(departure_city=self.flight.departure_city, arrival_city=self.flight.arrival_city, departure_data_time__date=self.flight.flight_date)
-        if specific_tickets and len(specific_tickets) == 1:
-            return specific_tickets[0]
-        else:
-            return None
+        return specific_tickets
 
     def __str__(self):
         return f'{self.flight} - {self.price}'

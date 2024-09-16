@@ -1,6 +1,9 @@
+from re import search
+
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
-from flightfinder.models import Flight, FlightPrice, City, FlightSearch, SidebarDestination, SpecificFlight, FlightConnect
+from flightfinder.models import Flight, FlightPrice, City, FlightSearch, SidebarDestination, SpecificFlight, \
+    FlightConnect
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 import subprocess
@@ -11,6 +14,8 @@ from flightfinder.ultis import get_sidebar_destinations
 from flightfinder.models import TicketPlanDisplay, TicketPlanSearchDisplay
 from instagramservice.filtering import get_facts_queryset
 from instagramservice.models import InstagramPost, InstagramPostFact, Fact
+from collections import defaultdict
+import json
 
 # Create your views here.
 
@@ -21,24 +26,26 @@ def home(request):
     print(from_search_date, to_search_date)
 
 
-    departure_city = City.objects.get(name="Gdansk")
-    searches = []
 
-    for arrival_city in ['Alicante', 'Malaga', 'Neapol', 'Piza', 'Bergamo', 'Brindisi', 'Rzym', 'Barcelona', 'Zadar', 'Paryz']:
-        searches.append(TicketPlanSearchDisplay.objects.filter(departure_city=departure_city, arrival_city=City.objects.get(name=arrival_city)).order_by('created_at').first())
 
-        print('SEARCH', TicketPlanSearchDisplay.objects.filter(departure_city=departure_city, arrival_city=City.objects.get(name=arrival_city)).order_by('-created_at').first().created_at)
+    flight_connections = FlightConnect.objects.filter(is_active=True)
 
-    ticket_plan_display = TicketPlanDisplay.objects.filter(search__in=searches).order_by(
-            'total_price')
+    ticket_plan_display_ids = []
 
-    posts = InstagramPost.objects.all().order_by('-published_date')[:12]
+    for flight_connect in flight_connections:
+        search_display = TicketPlanSearchDisplay.objects.filter(departure_city=flight_connect.departure_city, arrival_city=flight_connect.arrival_city).order_by('created_at').first()
+        ticket_plan = TicketPlanDisplay.objects.filter(search=search_display, duration__gt=1, duration__lte=7).order_by('total_price').first()
+        if ticket_plan:
+            ticket_plan_display_ids.append(ticket_plan.id)
+
+
+
+
 
     context = {
-        'posts': posts,
-        'cities': City.objects.all(),
-        'updates': FlightSearch.objects.all().order_by('-search_date')[:10],
-        'sidebar_destinations': get_sidebar_destinations()
+        'ticket_plans': TicketPlanDisplay.objects.filter(id__in=ticket_plan_display_ids)[:8],
+        'updates': FlightSearch.objects.all().order_by('-search_date')[:12],
+        'header_transparent_class': True,
     }
 
     return render(request, 'flightfinder/index.html', context)
@@ -52,13 +59,17 @@ def offer_detail(request, departure_city, arrival_city, ticket_date, ticket_retu
     arrival_city = City.objects.get(name=arrival_city)
 
 
+
     search = TicketPlanSearchDisplay.objects.filter(departure_city=departure_city,
-                                           arrival_city=arrival_city).order_by('created_at').first()
+                                                    arrival_city=arrival_city).order_by('created_at').first()
 
     ticket_date = datetime.strptime(ticket_date, '%d-%m-%Y').date()
     ticket_return_date = datetime.strptime(ticket_return_date, '%d-%m-%Y').date()
 
-    ticket_plan = TicketPlanDisplay.objects.get(search=search, ticket__flight__flight_date=ticket_date, return_ticket__flight__flight_date=ticket_return_date)
+    ticket_plan = TicketPlanDisplay.objects.filter(search=search, ticket__flight__flight_date=ticket_date,
+                                                return_ticket__flight__flight_date=ticket_return_date).first()
+
+
     context = {
         'ticket_plan': ticket_plan,
     }
@@ -66,13 +77,13 @@ def offer_detail(request, departure_city, arrival_city, ticket_date, ticket_retu
     return render(request, 'flightfinder/offer.html', context)
 
 
-def offer_search(request, departure_city=None, arrival_city=None, from_date='01-01-2024', to_date='01-01-2030', max_days=7):
+def offer_search(request, departure_city=None, arrival_city=None, from_date='01-01-2024', to_date='01-01-2030',
+                 max_days=7):
     from_search_date = datetime.now().date()
     to_search_date = datetime.now().date() + timedelta(days=100)
     print(from_search_date, to_search_date)
 
     MIN_DAYS = 2
-
 
     if request.method == 'POST':
         departure_city = request.POST.get('departure_city')
@@ -104,7 +115,9 @@ def offer_search(request, departure_city=None, arrival_city=None, from_date='01-
     for flight_connect in flight_connections:
         if flight_connect.departure_city.name in flight_connections_dict:
             print(flight_connections_dict[flight_connect.departure_city.name])
-            flight_connections_dict[flight_connect.departure_city.name] = flight_connections_dict[flight_connect.departure_city.name] + [flight_connect.arrival_city.name]
+            flight_connections_dict[flight_connect.departure_city.name] = flight_connections_dict[
+                                                                              flight_connect.departure_city.name] + [
+                                                                              flight_connect.arrival_city.name]
             print(flight_connections_dict[flight_connect.departure_city.name])
         else:
             flight_connections_dict[flight_connect.departure_city.name] = [flight_connect.arrival_city.name]
@@ -119,22 +132,32 @@ def offer_search(request, departure_city=None, arrival_city=None, from_date='01-
 
     searches = []
 
-    if arrival_city and arrival_city!= 'all':
+    if arrival_city and arrival_city != 'all':
         searches.append(TicketPlanSearchDisplay.objects.filter(departure_city=departure_city,
                                                                arrival_city=City.objects.get(
                                                                    name=arrival_city)).order_by('created_at').first())
+        ticket_plans = TicketPlanDisplay.objects.filter(
+            search__in=searches,
+            ticket__flight__flight_date__gte=from_date,
+            return_ticket__flight__flight_date__lte=to_date,
+            duration__lte=max_days,
+            duration__gte=MIN_DAYS).order_by('total_price')
+
+        sorted_tickets = ticket_plans
 
     else:
         all_queryset_ids = []
-        for arrival_city in ['Alicante', 'Malaga', 'Neapol', 'Piza', 'Bergamo', 'Brindisi', 'Rzym', 'Barcelona', 'Zadar',
+        for arrival_city_item in ['Alicante', 'Malaga', 'Neapol', 'Piza', 'Bergamo', 'Brindisi', 'Rzym', 'Barcelona',
+                             'Zadar',
                              'Paryz']:
 
             searches.append(TicketPlanSearchDisplay.objects.filter(departure_city=departure_city,
                                                                    arrival_city=City.objects.get(
-                                                                       name=arrival_city)).order_by('created_at').first())
+                                                                       name=arrival_city_item)).order_by(
+                'created_at').first())
             search = TicketPlanSearchDisplay.objects.filter(departure_city=departure_city,
-                                                                   arrival_city=City.objects.get(
-                                                                       name=arrival_city)).order_by('created_at').first()
+                                                            arrival_city=City.objects.get(
+                                                                name=arrival_city_item)).order_by('created_at').first()
             results = TicketPlanDisplay.objects.filter(
                 search=search,
                 ticket__flight__flight_date__gte=from_date,
@@ -142,43 +165,35 @@ def offer_search(request, departure_city=None, arrival_city=None, from_date='01-
                 duration__lte=max_days,
                 duration__gte=MIN_DAYS).order_by('total_price')[:15]
 
-
-            ticket_plans = TicketPlanDisplay.objects.filter(search__in=searches, ticket__flight__flight_date__gte=from_date, return_ticket__flight__flight_date__lte=to_date, duration__lte=max_days, duration__gte=MIN_DAYS).order_by(
-                'total_price')
             for ticket_plan in results:
                 all_queryset_ids.append(ticket_plan.id)
 
+        ticket_plans = TicketPlanDisplay.objects.filter(
+            id__in=all_queryset_ids).order_by('total_price', 'ticket__flight__arrival_city')
 
+        # Grupowanie biletów według nazwy miasta przylotu
+        grouped_tickets = defaultdict(list)
 
-    ticket_plans = TicketPlanDisplay.objects.filter(
-        id__in=all_queryset_ids).order_by('total_price', 'ticket__flight__arrival_city')
+        # Tworzenie grup na podstawie arrival_city.name
+        for ticket in ticket_plans:
+            city_name = ticket.ticket.flight.arrival_city.name
+            grouped_tickets[city_name].append(ticket)
 
-    from collections import defaultdict
+        # Zamieniamy grupy na deque (kolejki), co pozwala szybciej usuwać elementy z przodu listy
+        from collections import deque
+        city_queues = {city: deque(tickets) for city, tickets in grouped_tickets.items()}
 
-    # Grupowanie biletów według nazwy miasta przylotu
-    grouped_tickets = defaultdict(list)
+        # Naprzemienne pobieranie biletów z każdej grupy
+        sorted_tickets = []
+        cities = list(city_queues.keys())  # Lista miast do iteracji
 
-    # Tworzenie grup na podstawie arrival_city.name
-    for ticket in ticket_plans:
-        city_name = ticket.ticket.flight.arrival_city.name
-        grouped_tickets[city_name].append(ticket)
-
-    # Zamieniamy grupy na deque (kolejki), co pozwala szybciej usuwać elementy z przodu listy
-    from collections import deque
-    city_queues = {city: deque(tickets) for city, tickets in grouped_tickets.items()}
-
-    # Naprzemienne pobieranie biletów z każdej grupy
-    sorted_tickets = []
-    cities = list(city_queues.keys())  # Lista miast do iteracji
-
-    while city_queues:
-        for city in cities[:]:  # Tworzymy kopię listy miast do iteracji
-            if city in city_queues and city_queues[city]:  # Sprawdzamy, czy są jeszcze bilety dla miasta
-                sorted_tickets.append(city_queues[city].popleft())  # Pobieramy bilet
-            if not city_queues[city]:  # Jeśli nie ma więcej biletów dla tego miasta, usuwamy je z listy
-                del city_queues[city]
-                cities.remove(city)
-
+        while city_queues:
+            for city in cities[:]:  # Tworzymy kopię listy miast do iteracji
+                if city in city_queues and city_queues[city]:  # Sprawdzamy, czy są jeszcze bilety dla miasta
+                    sorted_tickets.append(city_queues[city].popleft())  # Pobieramy bilet
+                if not city_queues[city]:  # Jeśli nie ma więcej biletów dla tego miasta, usuwamy je z listy
+                    del city_queues[city]
+                    cities.remove(city)
 
     paginator = Paginator(sorted_tickets, 12)
     page_number = request.GET.get('page')  # Pobranie numeru strony z zapytania GET
@@ -186,19 +201,30 @@ def offer_search(request, departure_city=None, arrival_city=None, from_date='01-
 
 
 
+    from_date = from_date.strftime("%d-%m-%Y")
+    if from_date == '01-01-2024':
+        from_date = None
 
+    to_date = to_date.strftime("%d-%m-%Y")
+    if to_date == '01-01-2030':
+        to_date = None
 
-
-    print('dict:', flight_connections_dict)
-
+    if max_days == str(7) or max_days == 7:
+        max_days = None
 
     context = {
         'page_obj': page_obj,
         'ticket_plans': sorted_tickets,
         'flight_connections_dict': flight_connections_dict,
-        'arrival_cities': tuple(arrival_cities),
+        'flight_connections_json': json.dumps(flight_connections_dict),
+        'arrival_cities': set(arrival_cities),
         'updates': FlightSearch.objects.all().order_by('-search_date')[:10],
-        'sidebar_destinations': get_sidebar_destinations()
+        'sidebar_destinations': get_sidebar_destinations(),
+        'departure_city': departure_city.name,
+        'arrival_city': str(arrival_city),
+        'from_date': from_date,
+        'to_date': to_date,
+        'max_days': max_days,
     }
 
     return render(request, 'flightfinder/offer-search.html', context)
@@ -245,21 +271,15 @@ def panel(request):
 
 
 def fact_posts(request):
-
     context = {
         'facts': get_facts_queryset(),
         'sidebar_destinations': get_sidebar_destinations()
     }
 
-
-
     return render(request, 'flightfinder/admin_panel.html', context)
 
 
-
 def fact_posts_detail(request, pk):
-
-
     context = {
         'fact': Fact.objects.get(pk=pk),
         'sidebar_destinations': get_sidebar_destinations()
@@ -271,10 +291,8 @@ def fact_posts_detail(request, pk):
 def fact_posts_edit(request, pk):
     fact = Fact.objects.get(pk=pk)
     files = os.listdir(f"instagramservice/images/instagram_posts_facts/background/{fact.category}/")
-    images_ids = [int(x+1) for x in range(len(files))]
+    images_ids = [int(x + 1) for x in range(len(files))]
     print('images_ids', images_ids)
-
-
 
     context = {
         'images_ids': images_ids,
@@ -327,7 +345,7 @@ def destination_view(request, departure_city, arrival_city):
                                                 arrival_city=City.objects.get(name=arrival_city)).order_by(
         '-search_date').first()
     print('arrival_city', arrival_city)
-    test= get_sidebar_destinations()
+    test = get_sidebar_destinations()
     for destination in test:
         print(destination)
     context = {
@@ -342,9 +360,11 @@ def destination_view(request, departure_city, arrival_city):
 
     return render(request, 'flightfinder/destination_view.html', context)
 
+
 import subprocess
 import os
 from flightfinder.tasks import import_tickets
+
 
 def update(request, departure_city, arrival_city):
     # os.system("docker-compose restart")
