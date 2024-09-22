@@ -23,6 +23,7 @@ from django.http import HttpResponse
 def get_client_ip(request):
     # Sprawdzanie, czy serwer jest za proxy (np. w przypadku Nginx lub CDN)
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    print(x_forwarded_for, request.META.get('REMOTE_ADDR'))
     if x_forwarded_for:
         ip = x_forwarded_for.split(',')[0]  # Pobiera pierwszy adres IP, jeśli jest kilka
     else:
@@ -42,10 +43,13 @@ def home(request):
             user_ip.amount += 1
             user_ip.save()
         else:
-            user_ip = UserIP(ip=ip)
+            user_ip = UserIP(ip=ip, amount=0)
             user_ip.save()
+
     except:
-        print('nie udalo sie')
+        pass
+
+
 
 
     flight_connections = FlightConnect.objects.filter(is_active=True)
@@ -89,12 +93,27 @@ def settings(request):
 
     context = {
         'flight_searches': searches[:20],
+        'ips': UserIP.objects.all()
     }
 
     return render(request, 'flightfinder/settings.html', context)
 
 
 def offer_detail(request, departure_city, arrival_city, ticket_date, ticket_return_date):
+
+    try:
+        ip = get_client_ip(request)
+        user_ip = UserIP.objects.filter(ip=ip).first()
+        if user_ip:
+            user_ip.amount += 1
+            user_ip.save()
+        else:
+            user_ip = UserIP(ip=ip, amount=0)
+            user_ip.save()
+
+    except:
+        pass
+
     from_search_date = datetime.now().date()
     to_search_date = datetime.now().date() + timedelta(days=100)
     print(from_search_date, to_search_date)
@@ -122,6 +141,19 @@ def offer_detail(request, departure_city, arrival_city, ticket_date, ticket_retu
 
 def flight_collection_detail(request, pk):
 
+    try:
+        ip = get_client_ip(request)
+        user_ip = UserIP.objects.filter(ip=ip).first()
+        if user_ip:
+            user_ip.amount += 1
+            user_ip.save()
+        else:
+            user_ip = UserIP(ip=ip, amount=0)
+            user_ip.save()
+
+    except:
+        pass
+
 
     context = {
         'collection': FlightCollection.objects.get(id=pk)
@@ -131,6 +163,20 @@ def flight_collection_detail(request, pk):
 
 def offer_search(request, departure_city_input='all', arrival_city_input='all', from_date='01-01-2024', to_date='01-01-2030',
                  max_days=7):
+
+    try:
+        ip = get_client_ip(request)
+        user_ip = UserIP.objects.filter(ip=ip).first()
+        if user_ip:
+            user_ip.amount += 1
+            user_ip.save()
+        else:
+            user_ip = UserIP(ip=ip, amount=0)
+            user_ip.save()
+
+    except:
+        pass
+
     from_search_date = datetime.now().date()
     to_search_date = datetime.now().date() + timedelta(days=100)
     print(from_search_date, to_search_date)

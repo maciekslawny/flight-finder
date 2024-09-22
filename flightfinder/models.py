@@ -140,5 +140,19 @@ class UserIP(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     amount = models.IntegerField()
 
+    def get_location(self):
+        from django.contrib.gis.geoip2 import GeoIP2
+        g = GeoIP2()
+        try:
+            city = g.city(self.ip)  # Zwraca miasto, kraj i współrzędne geograficzne
+            country = g.country(self.ip)  # Zwraca informacje o kraju
+            print(f'Użytkownik z {city["city"]}, {country["country_name"]}')
+        except Exception as e:
+            print(f'Błąd podczas pobierania geolokalizacji: {e}')
+            city, country = None, None
+
+        return f'{city}, {country}'
+
+
     def __str__(self):
         return f'{self.ip}'

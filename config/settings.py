@@ -151,3 +151,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://www.lotyokazje.pl',
     'https://141.95.52.244'
 ]
+
+import os
+
+GEOIP_PATH = os.path.join(BASE_DIR, 'geoip')

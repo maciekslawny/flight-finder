@@ -181,7 +181,7 @@ class InstagramStory(models.Model):
         for flight_connect in flight_connects:
             ticket_plan_search = TicketPlanSearchDisplay.objects.filter(departure_city=departure_city,
                                                                         arrival_city=flight_connect.arrival_city).order_by(
-                'created_at').first()
+                'created_at').last()
             ticket_plan = TicketPlanDisplay.objects.filter(search=ticket_plan_search).order_by('total_price').first()
             if ticket_plan:
                 ticket_plan_display_ids.append(ticket_plan.id)

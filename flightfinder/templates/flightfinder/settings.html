@@ -51,6 +51,32 @@
                             </tbody>
                         </table>
 
+
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">IP</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Created</th>
+                                <th scope="col">Location</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for ip in ips %}
+                            <tr>
+                                <th scope="row">{{ ip.id }}</th>
+                                <td>{{ ip.ip }} - {{ search.arrival_city }}</td>
+                                <td>{{ ip.amount }}</td>
+                                <td>{{ ip.created_at }} - {{ search.arrival_city }}</td>
+                                <td>{{ ip.get_location }}</td>
+                            </tr>
+                            {% endfor %}
+
+                            </tbody>
+                        </table>
+
+
                     </div>
                 </section>
 
