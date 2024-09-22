@@ -31,7 +31,7 @@ moviepy==1.0.3
 numpy==1.26.4
 outcome==1.3.0.post0
 packaging==24.0
-pillow==10.3.0
+pillow==9.5.0
 pluggy==1.4.0
 proglog==0.1.10
 prometheus_client==0.20.0
