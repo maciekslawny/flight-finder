@@ -3,7 +3,7 @@ from django.core.management import call_command
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from flightfinder.models import Flight, FlightPrice, City, FlightSearch, SidebarDestination, SpecificFlight, \
-    FlightConnect, FlightCollection
+    FlightConnect, FlightCollection, UserIP
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 import subprocess
@@ -16,16 +16,36 @@ from instagramservice.filtering import get_facts_queryset
 from instagramservice.models import InstagramPost, InstagramPostFact, Fact
 from collections import defaultdict
 import json
+from django.http import HttpResponse
 
 # Create your views here.
+
+def get_client_ip(request):
+    # Sprawdzanie, czy serwer jest za proxy (np. w przypadku Nginx lub CDN)
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]  # Pobiera pierwszy adres IP, jeśli jest kilka
+    else:
+        ip = request.META.get('REMOTE_ADDR')  # Adres IP klienta
+    return ip
+
 
 
 def home(request):
     from_search_date = datetime.now().date()
     to_search_date = datetime.now().date() + timedelta(days=100)
     print(from_search_date, to_search_date)
-
-
+    try:
+        ip = get_client_ip(request)
+        user_ip = UserIP.objects.filter(ip=ip).first()
+        if user_ip:
+            user_ip.amount += 1
+            user_ip.save()
+        else:
+            user_ip = UserIP(ip=ip)
+            user_ip.save()
+    except:
+        print('nie udalo sie')
 
 
     flight_connections = FlightConnect.objects.filter(is_active=True)
@@ -65,9 +85,10 @@ def settings(request):
         elif action == 'delete-data':
             call_command('delete_data_command')
 
-
+    searches = FlightSearch.objects.all().order_by('-search_date')
 
     context = {
+        'flight_searches': searches[:20],
     }
 
     return render(request, 'flightfinder/settings.html', context)

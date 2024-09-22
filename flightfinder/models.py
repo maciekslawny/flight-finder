@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from django.db import models
 
 # Create your models here.
@@ -66,6 +68,9 @@ class FlightSearch(models.Model):
     def __str__(self):
         return f'{self.departure_city}, {self.arrival_city} - {self.search_date}'
 
+    def get_time_ago(self):
+        return str(timezone.now() - self.search_date)[0:7]
+
 
 
 class FlightPrice(models.Model):
@@ -128,3 +133,12 @@ class FlightCollectionItem(models.Model):
     arrival_city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='arrival_city_flight_collection')
     flight_date = models.DateField()
     return_flight_date = models.DateField()
+
+
+class UserIP(models.Model):
+    ip = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    amount = models.IntegerField()
+
+    def __str__(self):
+        return f'{self.ip}'

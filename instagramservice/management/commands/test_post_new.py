@@ -7,7 +7,6 @@ from flightfinder.services import CheapestTicketPlanService, TicketPlanFinder
 from instagramservice.models import InstagramPost
 from instagramservice.cities_services import AlicanteService
 
-
 class Command(BaseCommand):
     help = 'Closes the specified poll for voting'
 
@@ -33,11 +32,8 @@ class Command(BaseCommand):
         last_used_cities = []
         published_posts = InstagramPost.objects.filter(is_published=True).order_by('-published_date')
 
-        if len(published_posts) >= 7:
-            amount = 7
-        elif len(published_posts) == 6:
-            amount = 6
-        elif len(published_posts) == 5:
+
+        if len(published_posts) == 5:
             amount = 5
         elif len(published_posts) == 4:
             amount = 4

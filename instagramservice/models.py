@@ -58,8 +58,9 @@ class InstagramPost(models.Model):
             f'Lot z {self.departure_city} do {self.arrival_city} w dwie strony za {self.price} PLN! \n'
             f'{self.departure_city} - {self.arrival_city} ✈️ ({self.flight_date}) \n'
             f'{self.arrival_city} - {self.departure_city} ✈️ ({self.flight_return_date}) \n'
+             f'--------------- \nLink do okazji: lotyokazje.pl/okazja/{self.departure_city}/{self.arrival_city}/{self.flight_date[8:10]}-{self.flight_date[5:7]}-{self.flight_date[0:4]}/{self.flight_return_date[8:10]}-{self.flight_return_date[5:7]}-{self.flight_return_date[0:4]} 📩\n---------------\n'
+            
             f'\n{city_desc}\n'
-            f'--------------- \nNapisz do nas! 📩\n---------------\n'
             f'{hashtags} \n'
         )
         self.description = result_description

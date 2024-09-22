@@ -1,5 +1,5 @@
 from django.contrib import admin
-from flightfinder.models import City, Flight, FlightPrice, FlightSearch, FlightConnect, SidebarDestination, TestModel, TicketPlanSearchDisplay, TicketPlanDisplay, SpecificFlight, FlightCollection, FlightCollectionItem
+from flightfinder.models import UserIP, City, Flight, FlightPrice, FlightSearch, FlightConnect, SidebarDestination, TestModel, TicketPlanSearchDisplay, TicketPlanDisplay, SpecificFlight, FlightCollection, FlightCollectionItem
 
 admin.site.register(City)
 admin.site.register(Flight)
@@ -13,3 +13,4 @@ admin.site.register(SpecificFlight)
 admin.site.register(FlightConnect)
 admin.site.register(FlightCollection)
 admin.site.register(FlightCollectionItem)
+admin.site.register(UserIP)
