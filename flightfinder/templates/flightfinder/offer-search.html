@@ -22,8 +22,8 @@
 
                                 <select class="select-own" name="departure_city" aria-label="Default select example">
                                     <option value="all" class="select-first-option" selected>Wszystkie</option>
-                                    {% for departure_city_value in flight_connections_dict %}
-                                       <option {% if departure_city_value == departure_city %}selected{% endif %} value="{{ departure_city_value }}">{{ departure_city_value }}</option>
+                                    {% for departure_city_value in departure_cities %}
+                                       <option {% if departure_city_value.name == departure_city %}selected{% endif %} value="{{ departure_city_value }}">{{ departure_city_value }} </option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -39,12 +39,12 @@
                             </div>
                             <div class="input-group input--medium test-pink">
                                 <label class="label">Wylot od</label>
-                                <input class="input--style-1" type="text" name="from_date" placeholder="dd/mm/yyyy"
+                                <input class="input--style-1" type="text" name="from_date" placeholder="dd-mm-yyyy"
                                        id="input-start-class" {% if from_date %} value="{{ from_date }}"  {% endif %}>
                             </div>
                             <div class="input-group input--medium test-pink">
                                 <label class="label">Powrót do</label>
-                                <input class="input--style-1" type="text" name="to_date" placeholder="dd/mm/yyyy"
+                                <input class="input--style-1" type="text" name="to_date" placeholder="dd-mm-yyyy"
                                        id="input-end-class" {% if to_date %} value="{{ to_date }}"  {% endif %}>
                             </div>
                             <div class="input-group input--medium test-pink">

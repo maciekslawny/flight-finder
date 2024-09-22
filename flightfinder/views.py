@@ -1,9 +1,9 @@
 from re import search
-
+from django.core.management import call_command
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from flightfinder.models import Flight, FlightPrice, City, FlightSearch, SidebarDestination, SpecificFlight, \
-    FlightConnect
+    FlightConnect, FlightCollection
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 import subprocess
@@ -51,6 +51,25 @@ def home(request):
     return render(request, 'flightfinder/index.html', context)
 
 
+
+def settings(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+
+        if action == 'post':
+            call_command('test_post_new')
+        elif action == 'import':
+            call_command('import_flights')
+        elif action == 'story':
+            call_command('test_story')
+
+
+    context = {
+    }
+
+    return render(request, 'flightfinder/settings.html', context)
+
+
 def offer_detail(request, departure_city, arrival_city, ticket_date, ticket_return_date):
     from_search_date = datetime.now().date()
     to_search_date = datetime.now().date() + timedelta(days=100)
@@ -77,7 +96,16 @@ def offer_detail(request, departure_city, arrival_city, ticket_date, ticket_retu
     return render(request, 'flightfinder/offer.html', context)
 
 
-def offer_search(request, departure_city=None, arrival_city=None, from_date='01-01-2024', to_date='01-01-2030',
+def flight_collection_detail(request, pk):
+
+
+    context = {
+        'collection': FlightCollection.objects.get(id=pk)
+    }
+
+    return render(request, 'flightfinder/flight-collection-detail.html', context)
+
+def offer_search(request, departure_city_input='all', arrival_city_input='all', from_date='01-01-2024', to_date='01-01-2030',
                  max_days=7):
     from_search_date = datetime.now().date()
     to_search_date = datetime.now().date() + timedelta(days=100)
@@ -86,8 +114,8 @@ def offer_search(request, departure_city=None, arrival_city=None, from_date='01-
     MIN_DAYS = 2
 
     if request.method == 'POST':
-        departure_city = request.POST.get('departure_city')
-        arrival_city = request.POST.get('arrival_city')
+        departure_city_input = request.POST.get('departure_city')
+        arrival_city_input = request.POST.get('arrival_city')
         from_date = request.POST.get('from_date')
         to_date = request.POST.get('to_date')
         max_days = request.POST.get('max_days')
@@ -100,15 +128,17 @@ def offer_search(request, departure_city=None, arrival_city=None, from_date='01-
 
         if not max_days:
             max_days = 7
-        print('POST', departure_city, arrival_city, from_date, to_date, max_days)
+        print('POST', departure_city_input, arrival_city_input, from_date, to_date, max_days)
 
-        return redirect(f'/search/{departure_city}/{arrival_city}/{from_date}/{to_date}/{max_days}')
+        return redirect(f'/search/{departure_city_input}/{arrival_city_input}/{from_date}/{to_date}/{max_days}')
 
     from_date = datetime.strptime(from_date, '%d-%m-%Y')
     to_date = datetime.strptime(to_date, '%d-%m-%Y')
 
     flight_connections_dict = {}
+    flight_connections_dict['all'] = []
     arrival_cities = []
+    departure_cities = []
 
     flight_connections = FlightConnect.objects.filter(is_active=True)
 
@@ -123,54 +153,53 @@ def offer_search(request, departure_city=None, arrival_city=None, from_date='01-
             flight_connections_dict[flight_connect.departure_city.name] = [flight_connect.arrival_city.name]
 
         arrival_cities.append(flight_connect.arrival_city)
+        departure_cities.append(flight_connect.departure_city)
 
-    if departure_city and departure_city != 'all':
+        if flight_connect.arrival_city not in flight_connections_dict['all']:
+            flight_connections_dict['all'] = flight_connections_dict['all'] + [flight_connect.arrival_city.name]
 
-        departure_city = City.objects.get(name=departure_city)
-    else:
-        departure_city = City.objects.get(name='Gdansk')
 
+
+    if departure_city_input== 'all' and arrival_city_input == 'all':
+        connect_flights = FlightConnect.objects.filter(is_active=True)
+
+    elif departure_city_input != 'all' and arrival_city_input == 'all':
+        departure_city = City.objects.get(name=departure_city_input)
+        connect_flights = FlightConnect.objects.filter(is_active=True, departure_city=departure_city)
+    elif departure_city_input == 'all' and arrival_city_input != 'all':
+        arrival_city = City.objects.get(name=arrival_city_input)
+        connect_flights = FlightConnect.objects.filter(is_active=True, arrival_city=arrival_city)
+    elif departure_city_input != 'all' and arrival_city_input != 'all':
+        arrival_city = City.objects.get(name=arrival_city_input)
+        departure_city = City.objects.get(name=departure_city_input)
+        connect_flights = FlightConnect.objects.filter(is_active=True, arrival_city=arrival_city, departure_city=departure_city)
+
+    all_queryset_ids = []
     searches = []
-
-    if arrival_city and arrival_city != 'all':
-        searches.append(TicketPlanSearchDisplay.objects.filter(departure_city=departure_city,
-                                                               arrival_city=City.objects.get(
-                                                                   name=arrival_city)).order_by('created_at').first())
-        ticket_plans = TicketPlanDisplay.objects.filter(
-            search__in=searches,
+    for con_flight in connect_flights:
+        searches.append(TicketPlanSearchDisplay.objects.filter(departure_city=con_flight.departure_city,
+                                                               arrival_city=con_flight.arrival_city).order_by('created_at').first())
+    for search in searches:
+        results = TicketPlanDisplay.objects.filter(
+            search=search,
             ticket__flight__flight_date__gte=from_date,
             return_ticket__flight__flight_date__lte=to_date,
             duration__lte=max_days,
             duration__gte=MIN_DAYS).order_by('total_price')
 
-        sorted_tickets = ticket_plans
+        if len(searches) > 1:
+            results = results[:15]
 
-    else:
-        all_queryset_ids = []
-        for arrival_city_item in ['Alicante', 'Malaga', 'Neapol', 'Piza', 'Bergamo', 'Brindisi', 'Rzym', 'Barcelona',
-                             'Zadar',
-                             'Paryz']:
+        for ticket_plan in results:
+            all_queryset_ids.append(ticket_plan.id)
 
-            searches.append(TicketPlanSearchDisplay.objects.filter(departure_city=departure_city,
-                                                                   arrival_city=City.objects.get(
-                                                                       name=arrival_city_item)).order_by(
-                'created_at').first())
-            search = TicketPlanSearchDisplay.objects.filter(departure_city=departure_city,
-                                                            arrival_city=City.objects.get(
-                                                                name=arrival_city_item)).order_by('created_at').first()
-            results = TicketPlanDisplay.objects.filter(
-                search=search,
-                ticket__flight__flight_date__gte=from_date,
-                return_ticket__flight__flight_date__lte=to_date,
-                duration__lte=max_days,
-                duration__gte=MIN_DAYS).order_by('total_price')[:15]
 
-            for ticket_plan in results:
-                all_queryset_ids.append(ticket_plan.id)
 
-        ticket_plans = TicketPlanDisplay.objects.filter(
-            id__in=all_queryset_ids).order_by('total_price', 'ticket__flight__arrival_city')
+    ticket_plans = TicketPlanDisplay.objects.filter(
+        id__in=all_queryset_ids).order_by('total_price', 'ticket__flight__arrival_city')
 
+
+    if len(searches) > 1:
         # Grupowanie biletów według nazwy miasta przylotu
         grouped_tickets = defaultdict(list)
 
@@ -195,10 +224,12 @@ def offer_search(request, departure_city=None, arrival_city=None, from_date='01-
                     del city_queues[city]
                     cities.remove(city)
 
+    else:
+        sorted_tickets = ticket_plans
+
     paginator = Paginator(sorted_tickets, 12)
     page_number = request.GET.get('page')  # Pobranie numeru strony z zapytania GET
     page_obj = paginator.get_page(page_number)  # Pobranie odpowiedniej strony
-
 
 
     from_date = from_date.strftime("%d-%m-%Y")
@@ -218,10 +249,11 @@ def offer_search(request, departure_city=None, arrival_city=None, from_date='01-
         'flight_connections_dict': flight_connections_dict,
         'flight_connections_json': json.dumps(flight_connections_dict),
         'arrival_cities': set(arrival_cities),
+        'departure_cities': set(departure_cities),
         'updates': FlightSearch.objects.all().order_by('-search_date')[:10],
         'sidebar_destinations': get_sidebar_destinations(),
-        'departure_city': departure_city.name,
-        'arrival_city': str(arrival_city),
+        'departure_city': departure_city_input,
+        'arrival_city': arrival_city_input,
         'from_date': from_date,
         'to_date': to_date,
         'max_days': max_days,

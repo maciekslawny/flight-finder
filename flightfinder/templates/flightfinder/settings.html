@@ -1,0 +1,37 @@
+{% extends 'base-file.html' %}
+{% load static %}
+{% static "" as staticUrl %}
+{% block content %}
+
+
+
+    <main id="main">
+
+
+        <section class="team mt-2">
+
+            <div class="container">
+
+
+                <section class="section dashboard">
+                    <div class="row">
+
+                        <form class="form" method="POST" action="/settings">
+                            {% csrf_token %}
+
+                            <button type="submit" name="action" value="post" class="btn btn-primary mb-4">Post</button>
+                            <button type="submit" name="action" value="story" class="btn btn-primary mb-4">Story</button>
+                            <button type="submit" name="action" value="import" class="btn btn-primary mb-4">Import Flights</button>
+
+                        </form>
+
+                    </div>
+                </section>
+
+                <!-- ======= Breadcrumbs Section ======= -->
+            </div>
+        </section>
+
+    </main><!-- End #main -->
+
+{% endblock %}

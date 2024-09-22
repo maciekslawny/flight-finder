@@ -107,3 +107,24 @@ class TicketPlanDisplay(models.Model):
 
 class TestModel(models.Model):
     amount = models.FloatField()
+
+class FlightCollection(models.Model):
+    description = models.CharField(max_length=128, blank=True, null=True)
+
+    @property
+    def get_ticket_plans(self):
+        collections_items = FlightCollectionItem.objects.filter(flight_collection=self)
+        ticket_plan_ids  = []
+        for item in collections_items:
+            ticket_plan_search = TicketPlanSearchDisplay.objects.filter(departure_city=item.departure_city, arrival_city=item.arrival_city).order_by('created_at').first()
+            ticket_plan = TicketPlanDisplay.objects.filter(search=ticket_plan_search, ticket__flight__flight_date=item.flight_date, return_ticket__flight__flight_date=item.return_flight_date).first()
+            if ticket_plan:
+                ticket_plan_ids.append(ticket_plan.id)
+        return TicketPlanDisplay.objects.filter(id__in=ticket_plan_ids)
+
+class FlightCollectionItem(models.Model):
+    flight_collection = models.ForeignKey(FlightCollection, on_delete=models.CASCADE, related_name='flight_collection')
+    departure_city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='departure_city_flight_collection')
+    arrival_city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='arrival_city_flight_collection')
+    flight_date = models.DateField()
+    return_flight_date = models.DateField()

@@ -5,7 +5,9 @@ from django.db import models
 from flightfinder.services import CheapestTicketPlanService, TicketPlanFinder
 from instagramservice.services import InstagramService
 import instagramservice.cities_services as cities_services
-from flightfinder.models import City
+from flightfinder.models import City, FlightCollection, FlightCollectionItem, FlightConnect, TicketPlanSearchDisplay, \
+    TicketPlanDisplay
+
 
 # Create your models here.
 
@@ -53,12 +55,12 @@ class InstagramPost(models.Model):
         city_desc = city_service.get_random_description()
         hashtags = city_service.get_10_random_hashtags()
         result_description = (
-        f'Lot z {self.departure_city} do {self.arrival_city} w dwie strony za {self.price} PLN! \n'
-        f'{self.departure_city} - {self.arrival_city} ✈️ ({self.flight_date}) \n'
-        f'{self.arrival_city} - {self.departure_city} ✈️ ({self.flight_return_date}) \n'
-        f'\n{city_desc}\n'
-        f'--------------- \nNapisz do nas! 📩\n---------------\n'
-        f'{hashtags} \n'
+            f'Lot z {self.departure_city} do {self.arrival_city} w dwie strony za {self.price} PLN! \n'
+            f'{self.departure_city} - {self.arrival_city} ✈️ ({self.flight_date}) \n'
+            f'{self.arrival_city} - {self.departure_city} ✈️ ({self.flight_return_date}) \n'
+            f'\n{city_desc}\n'
+            f'--------------- \nNapisz do nas! 📩\n---------------\n'
+            f'{hashtags} \n'
         )
         self.description = result_description
         self.save()
@@ -85,8 +87,6 @@ class InstagramPost(models.Model):
             self.save()
         except:
             print('Error publishing')
-
-
 
     def __str__(self):
         return f'{self.departure_city} - {self.arrival_city} - {self.price} - {self.created_at}'
@@ -122,7 +122,7 @@ class Fact(models.Model):
 
     @property
     def get_image_url(self):
-        return f'instagramservice/images/instagram_posts_facts/background/{ self.category }/{ self.img_id }.jpg'
+        return f'instagramservice/images/instagram_posts_facts/background/{self.category}/{self.img_id}.jpg'
 
     def __str__(self):
         is_used = ''
@@ -131,14 +131,12 @@ class Fact(models.Model):
         return f"{self.id} - {self.place} - {self.title}{is_used}"
 
 
-
 class InstagramPostFact(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     published_date = models.DateTimeField(null=True)
     is_published = models.BooleanField(default=False)
     is_image_generated = models.BooleanField(default=False)
     fact = models.ForeignKey(Fact, on_delete=models.CASCADE, null=True, blank=True)
-
 
     def generate_image(self):
         service = InstagramService()
@@ -165,30 +163,80 @@ class InstagramPostFact(models.Model):
 class InstagramStory(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     description = models.TextField()
+    flight_collection = models.ForeignKey(FlightCollection, on_delete=models.CASCADE, null=True, blank=True)
+    departure_city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
     is_published = models.BooleanField(default=False)
     is_story_generated = models.BooleanField(default=False)
 
+    def generate_collection(self):
+
+        new_flight_collection = FlightCollection(description='Kolekcja powstała z InstagramStory')
+        new_flight_collection.save()
+
+        departure_city = self.departure_city
+        flight_connects = FlightConnect.objects.filter(departure_city=departure_city)
+
+        ticket_plan_display_ids = []
+        for flight_connect in flight_connects:
+            ticket_plan_search = TicketPlanSearchDisplay.objects.filter(departure_city=departure_city,
+                                                                        arrival_city=flight_connect.arrival_city).order_by(
+                'created_at').first()
+            ticket_plan = TicketPlanDisplay.objects.filter(search=ticket_plan_search).order_by('total_price').first()
+            if ticket_plan:
+                ticket_plan_display_ids.append(ticket_plan.id)
+
+        tickets = TicketPlanDisplay.objects.filter(id__in=ticket_plan_display_ids)
+
+        # USUWANIE MIAST KTORE BYLY W WCZESNIEJSZYM POSCIE
+        previous_arrival_cities = [ticket_plan.ticket.flight.arrival_city for ticket_plan in InstagramStory.objects.filter(departure_city=departure_city).exclude(flight_collection=None).order_by('created_at').last().flight_collection.get_ticket_plans]
+        print('ostatnie miasta:', InstagramStory.objects.filter(departure_city=departure_city).exclude(flight_collection=None).order_by('created_at').last().id, previous_arrival_cities)
+
+        final_ticket_plan_display_ids = []
+        max_delete = len(ticket_plan_display_ids) - len(previous_arrival_cities)
+
+        deleted_amount  = 0
+        print('max_delete', max_delete)
+
+        for ticket in tickets:
+            if ticket.ticket.flight.arrival_city in previous_arrival_cities and max_delete > deleted_amount:
+                deleted_amount += 1
+            else:
+                final_ticket_plan_display_ids.append(ticket.id)
+
+        tickets = TicketPlanDisplay.objects.filter(id__in=final_ticket_plan_display_ids)
+
+        tickets = tickets[:4]
+        for ticket in tickets:
+            print('ostateczne tickets', ticket.ticket.flight.arrival_city)
+
+        for ticket in tickets:
+            collection_item = FlightCollectionItem(flight_collection=new_flight_collection,
+                                                   departure_city=ticket.ticket.flight.departure_city,
+                                                   arrival_city=ticket.ticket.flight.arrival_city,
+                                                   flight_date=ticket.ticket.flight.flight_date,
+                                                   return_flight_date=ticket.return_ticket.flight.flight_date, )
+            collection_item.save()
+            print('collection_item saved', collection_item)
+        self.flight_collection = new_flight_collection
+        self.save()
+
     def generate_image(self):
-        from_search_date = datetime.now().date()
-        to_search_date = datetime.now().date() + timedelta(days=120)
-        print(from_search_date, to_search_date)
-
-        finding_ticket_service = CheapestTicketPlanService()
-        finder = TicketPlanFinder(ticket_plan_service=finding_ticket_service)
-
-        tickets = []
-        for city_string in ['Alicante', 'Malaga', 'Neapol', 'Paryz', 'Rzym']:
-            tickets = tickets + finder.get_tickets_plan(from_search_date, to_search_date, 2, 7, 'Gdansk', city_string)
-        tickets = sorted(tickets, key=lambda x: x.total_price)
-
 
         service = InstagramService()
         service.story = self
-        service.flights_queryset = tickets
+        service.flight_collection = self.flight_collection
         service.create_story_image()
         self.is_image_generated = True
         self.save()
         print('Story image generated')
+
+    def publish(self):
+        service = InstagramService()
+        service.story = self
+        service.publish_story()
+        self.is_published = True
+        self.save()
+        print('Story has been published')
 
 
 class InstagramProfile(models.Model):

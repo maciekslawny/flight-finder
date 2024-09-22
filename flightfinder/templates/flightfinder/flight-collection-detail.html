@@ -1,0 +1,97 @@
+{% extends 'base-file.html' %}
+{% load static %}
+{% static "" as staticUrl %}
+{% block content %}
+
+
+
+    <main id="main">
+
+
+        <section class="team mt-2">
+
+            <div class="container">
+
+
+                <section class="section dashboard">
+                    <div class="row">
+
+                        <!-- Left side columns -->
+                        <div class="col-lg-8">
+                            <div class="row">
+
+
+
+                                {% for ticket_plan in collection.get_ticket_plans %}
+
+                                               <div class="col-lg-4 col-md-6 mb-4 ">
+
+
+                    <span class="test" data-aos="zoom-in" data-aos-delay="1"><b>{{ ticket_plan.total_price }} zł</b></span>
+                    <a href="/okazja/{{ ticket_plan.ticket.flight.departure_city.name }}/{{ ticket_plan.ticket.flight.arrival_city.name }}/{{ ticket_plan.ticket.flight.get_flight_date_str }}/{{ ticket_plan.return_ticket.flight.get_flight_date_str }}">
+                        <div class="member" data-aos="zoom-in" data-aos-delay="1">
+                            <div class="pic">
+                                <img src="{{ ticket_plan.ticket.flight.arrival_city.thumbnail_image.url }}" class="img-fluid" alt="">
+
+                            </div>
+
+                            <div class="member-info">
+                                <h4>{{ ticket_plan.ticket.flight.arrival_city.name }} - {{ ticket_plan.duration }} dni </h4>
+                                <span class="">{{ ticket_plan.ticket.flight.get_flight_date_str }} - {{ ticket_plan.return_ticket.flight.get_flight_date_str }}</span>
+                                <span>Z <b>{{ ticket_plan.ticket.flight.departure_city.genitive }}</b></span>
+
+                            </div>
+
+                        </div>
+                    </a>
+                </div>
+
+                                {% endfor %}
+
+
+                            </div>
+                        </div><!-- End Left side columns -->
+
+                        <!-- Right side columns -->
+                        <div class="col-lg-4">
+
+
+                            <!-- Recent Activity -->
+                            <div class="card">
+                                <div class="filter">
+                                    <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                        <li class="dropdown-header text-start">
+                                            <h6>Filter</h6>
+                                        </li>
+
+                                        <li><a class="dropdown-item" href="#">Today</a></li>
+                                        <li><a class="dropdown-item" href="#">This Month</a></li>
+                                        <li><a class="dropdown-item" href="#">This Year</a></li>
+                                    </ul>
+                                </div>
+
+                                <!-- Card with an image on top -->
+                                <div class="card">
+                                    <img src="{{ ticket_plan.ticket.flight.arrival_city.thumbnail_image.url }}"
+                                         class="card-img-top" alt="...">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Zestawienie lotów</h5>
+                                        <p class="card-text">{{ collection.description }} </p>
+                                    </div>
+                                </div><!-- End Card with an image on top -->
+
+
+                            </div><!-- End Right side columns -->
+
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ======= Breadcrumbs Section ======= -->
+            </div>
+        </section>
+
+    </main><!-- End #main -->
+
+{% endblock %}
