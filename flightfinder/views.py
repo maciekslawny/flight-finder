@@ -33,7 +33,7 @@ def home(request):
     ticket_plan_display_ids = []
 
     for flight_connect in flight_connections:
-        search_display = TicketPlanSearchDisplay.objects.filter(departure_city=flight_connect.departure_city, arrival_city=flight_connect.arrival_city).order_by('created_at').first()
+        search_display = TicketPlanSearchDisplay.objects.filter(departure_city=flight_connect.departure_city, arrival_city=flight_connect.arrival_city).order_by('created_at').last()
         ticket_plan = TicketPlanDisplay.objects.filter(search=search_display, duration__gt=1, duration__lte=7).order_by('total_price').first()
         if ticket_plan:
             ticket_plan_display_ids.append(ticket_plan.id)
@@ -62,6 +62,9 @@ def settings(request):
             call_command('import_flights')
         elif action == 'story':
             call_command('test_story')
+        elif action == 'delete-data':
+            call_command('delete_data_command')
+
 
 
     context = {
@@ -80,7 +83,7 @@ def offer_detail(request, departure_city, arrival_city, ticket_date, ticket_retu
 
 
     search = TicketPlanSearchDisplay.objects.filter(departure_city=departure_city,
-                                                    arrival_city=arrival_city).order_by('created_at').first()
+                                                    arrival_city=arrival_city).order_by('created_at').last()
 
     ticket_date = datetime.strptime(ticket_date, '%d-%m-%Y').date()
     ticket_return_date = datetime.strptime(ticket_return_date, '%d-%m-%Y').date()
@@ -178,7 +181,7 @@ def offer_search(request, departure_city_input='all', arrival_city_input='all', 
     searches = []
     for con_flight in connect_flights:
         searches.append(TicketPlanSearchDisplay.objects.filter(departure_city=con_flight.departure_city,
-                                                               arrival_city=con_flight.arrival_city).order_by('created_at').first())
+                                                               arrival_city=con_flight.arrival_city).order_by('created_at').last())
     for search in searches:
         results = TicketPlanDisplay.objects.filter(
             search=search,
@@ -276,7 +279,7 @@ def panel(request):
                          'Paryz']:
         searches.append(TicketPlanSearchDisplay.objects.filter(departure_city=departure_city,
                                                                arrival_city=City.objects.get(
-                                                                   name=arrival_city)).order_by('created_at').first())
+                                                                   name=arrival_city)).order_by('created_at').last())
 
         print('SEARCH', TicketPlanSearchDisplay.objects.filter(departure_city=departure_city,
                                                                arrival_city=City.objects.get(
