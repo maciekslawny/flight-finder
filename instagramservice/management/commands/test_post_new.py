@@ -33,7 +33,9 @@ class Command(BaseCommand):
         published_posts = InstagramPost.objects.filter(is_published=True).order_by('-published_date')
 
 
-        if len(published_posts) == 5:
+        if len(published_posts) >= 6:
+            amount = 6
+        elif len(published_posts) == 5:
             amount = 5
         elif len(published_posts) == 4:
             amount = 4
