@@ -188,6 +188,9 @@ class InstagramStory(models.Model):
 
         tickets = TicketPlanDisplay.objects.filter(id__in=ticket_plan_display_ids)
 
+
+        print('tickets', tickets)
+
         # USUWANIE MIAST KTORE BYLY W WCZESNIEJSZYM POSCIE
         previous_arrival_cities = [ticket_plan.ticket.flight.arrival_city for ticket_plan in InstagramStory.objects.filter(departure_city=departure_city).exclude(flight_collection=None).order_by('created_at').last().flight_collection.get_ticket_plans]
         print('ostatnie miasta:', InstagramStory.objects.filter(departure_city=departure_city).exclude(flight_collection=None).order_by('created_at').last().id, previous_arrival_cities)
@@ -217,7 +220,7 @@ class InstagramStory(models.Model):
                                                    flight_date=ticket.ticket.flight.flight_date,
                                                    return_flight_date=ticket.return_ticket.flight.flight_date, )
             collection_item.save()
-            print('collection_item saved', collection_item)
+            print('collection_item saved', collection_item.arrival_city)
         self.flight_collection = new_flight_collection
         self.save()
 

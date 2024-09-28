@@ -302,8 +302,8 @@ class InstagramService():
         draw = ImageDraw.Draw(background)
 
 
-
-
+        print('Tworzenie IMAGE')
+        print('items', self.flight_collection.get_ticket_plans.order_by('total_price'))
 
 
         current_position = 455

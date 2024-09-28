@@ -121,7 +121,7 @@ class FlightCollection(models.Model):
         collections_items = FlightCollectionItem.objects.filter(flight_collection=self)
         ticket_plan_ids  = []
         for item in collections_items:
-            ticket_plan_search = TicketPlanSearchDisplay.objects.filter(departure_city=item.departure_city, arrival_city=item.arrival_city).order_by('created_at').first()
+            ticket_plan_search = TicketPlanSearchDisplay.objects.filter(departure_city=item.departure_city, arrival_city=item.arrival_city).order_by('created_at').last()
             ticket_plan = TicketPlanDisplay.objects.filter(search=ticket_plan_search, ticket__flight__flight_date=item.flight_date, return_ticket__flight__flight_date=item.return_flight_date).first()
             if ticket_plan:
                 ticket_plan_ids.append(ticket_plan.id)
