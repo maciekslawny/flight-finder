@@ -175,7 +175,7 @@ class InstagramStory(models.Model):
         new_flight_collection.save()
 
         departure_city = self.departure_city
-        flight_connects = FlightConnect.objects.filter(departure_city=departure_city)
+        flight_connects = FlightConnect.objects.filter(departure_city=departure_city, is_active=True)
 
         ticket_plan_display_ids = []
         for flight_connect in flight_connects:
@@ -237,7 +237,7 @@ class InstagramStory(models.Model):
     def publish(self):
         service = InstagramService()
         service.story = self
-        service.publish_story()
+        # service.publish_story()
         self.is_published = True
         self.save()
         print('Story has been published')
